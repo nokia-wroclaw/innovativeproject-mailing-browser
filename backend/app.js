@@ -7,6 +7,8 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
 var app = express();
+var Imap = require('imap'),
+    inspect = require('util').inspect;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -88,22 +90,81 @@ connection.sync({
 	logging: console.log
 });
 ////////////////////////////  email  //////////////////////
-emailjs = require('emailjs');
-var server 	= emailjs.server.connect({
-    user:    "innovative.project@outlook.com",
-    password:"MailingGroup",
-    host:	 "smtp-mail.outlook.com",
-    tls: {ciphers: "SSLv3"}
-});
-var message	= {
-    text:	"i hope this works",
-    from:	"you <innovative.project@outlook.com>",
-    to:		"someone <mail@gmail.com>, another <mail@gmail.com>",
-    cc:		"else <mail@gmail.com>",
-    subject:	"testing emailjs"
-};
+// emailjs = require('emailjs');
+// var server 	= emailjs.server.connect({
+//     user:    "innovative.project@outlook.com",
+//     password:"MailingGroup",
+//     host:	 "smtp-mail.outlook.com",
+//     tls: {ciphers: "SSLv3"}
+// });
+// var message	= {
+//     text:	"i hope this works",
+//     from:	"you <innovative.project@outlook.com>",
+//     to:		"someone <pawi_xu@interia.pl>, another <mail@gmail.com>",
+//     cc:		"else <mail@gmail.com>",
+//     subject:	"testing emailjs"
+// };
 
-// send the message and get a callback with an error or details of the message that was sent
-server.send(message, function(err, message) { console.log(err || message); });
+// // send the message and get a callback with an error or details of the message that was sent
+// server.send(message, function(err, message) { console.log(err || message); });
+
+console.log('START RECEIVING MAILS');
+var imap = new Imap({
+  user: 'innovative.project@outlook.com',
+  password: 'password',
+  host: 'imap-mail.outlook.com',
+  port: 993,
+  tls: true
+});
+
+function openInbox(cb) {
+  imap.openBox('INBOX', true, cb);
+}
+
+imap.once('ready', function() {
+  openInbox(function(err, box) {
+    if (err) throw err;
+    var f = imap.seq.fetch('1:6', {
+      bodies: 'HEADER.FIELDS (FROM TO SUBJECT DATE)',
+      struct: true
+    });
+    f.on('message', function(msg, seqno) {
+      console.log('Message #%d', seqno);
+      var prefix = '(#' + seqno + ') ';
+      msg.on('body', function(stream, info) {
+        var buffer = '';
+        stream.on('data', function(chunk) {
+          buffer += chunk.toString('utf8');
+        });
+        stream.once('end', function() {
+          console.log(prefix + 'Parsed header: %s', inspect(Imap.parseHeader(buffer)));
+        });
+      });
+      msg.once('attributes', function(attrs) {
+        console.log(prefix + 'Attributes: %s', inspect(attrs, false, 8));
+      });
+      msg.once('end', function() {
+        console.log(prefix + 'Finished');
+      });
+    });
+    f.once('error', function(err) {
+      console.log('Fetch error: ' + err);
+    });
+    f.once('end', function() {
+      console.log('Done fetching all messages!');
+      imap.end();
+    });
+  });
+});
+
+imap.once('error', function(err) {
+  console.log(err);
+});
+
+imap.once('end', function() {
+  console.log('Connection ended');
+});
+
+imap.connect();
 
 module.exports = app;
