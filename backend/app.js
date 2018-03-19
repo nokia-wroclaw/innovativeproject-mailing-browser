@@ -91,7 +91,7 @@ connection.sync({
 emailjs = require('emailjs');
 var server 	= emailjs.server.connect({
     user:    "innovative.project@outlook.com",
-    password:"MailingGroup",
+    password:"password",
     host:	 "smtp-mail.outlook.com",
     tls: {ciphers: "SSLv3"}
 });
