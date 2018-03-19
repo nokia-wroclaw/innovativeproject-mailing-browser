@@ -93,14 +93,14 @@ connection.sync({
 // emailjs = require('emailjs');
 // var server 	= emailjs.server.connect({
 //     user:    "innovative.project@outlook.com",
-//     password:"MailingGroup",
+//     password:"password",
 //     host:	 "smtp-mail.outlook.com",
 //     tls: {ciphers: "SSLv3"}
 // });
 // var message	= {
 //     text:	"i hope this works",
 //     from:	"you <innovative.project@outlook.com>",
-//     to:		"someone <pawi_xu@interia.pl>, another <mail@gmail.com>",
+//     to:		"someone <mail@mail.pl>, another <mail@gmail.com>",
 //     cc:		"else <mail@gmail.com>",
 //     subject:	"testing emailjs"
 // };
