@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import '../App.css';
-import MenuExampleTabularOnLeft from './Menu';
+import MenuExample from './Menu';
 import MenuExampleSecondaryPointing from './MenuPointing';
 import _ from 'lodash';
 import { request } from 'http';
 import axios from 'axios';
 
 
-class App extends Component {
+export class Home extends Component {
 
 constructor(){
   super();
@@ -51,7 +51,7 @@ clicked(){
         <MenuExampleSecondaryPointing/>
         </div>
         <div>
-        <MenuExampleTabularOnLeft />
+<MenuExample/>
         <button onClick ={this.clicked}>TheButton</button>
         </div>
     </div>
@@ -81,4 +81,4 @@ search(query = "star"){
 
 
 
-export default App;
+export default Home;

@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 import { Grid, Menu, Segment } from 'semantic-ui-react'
 import axios from 'axios';
-import _ from 'lodash';
+import Mail from './Mail.jsx';
+import MailList from './MailList';
+//import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
-export default class MenuExampleTabularOnLeft extends Component {
+export default class MenuExample extends Component {
 
     constructor(){
         super();
@@ -19,7 +21,7 @@ export default class MenuExampleTabularOnLeft extends Component {
     //     this.Clicked();
     // }
 
-    handleItemClick = (e, { name , number }) => this.setState({ activeItem: name, number: number});
+    handleItemClick = (e, { name}) => this.setState({ activeItem: name});
    // handleItemClick = (e, { number }) => this.setState({ activeItem: name, number: number })
 
     Click(){
@@ -47,12 +49,14 @@ Clicked(){
       this.setState({text: "fgfd"});
 }
 
-    getOne(index) => {
+    getOne = (index) => {
     return axios.get("db.json")
 .then( response => response.data[index]);
 }
 
-//
+//getOne(1).then((result) => {
+//    console.log(result);
+//})
 //     Click4(){
 //         this.setState({
 //             number: 3
@@ -62,13 +66,12 @@ Clicked(){
         // console.log('fsfds');
         // console.log(this.state);
         const { activeItem } = this.state;
-        //const { text } = this.state;
-
+        const { number } = this.state;
         return (
             <Grid>
                 <Grid.Column width={4}>
                     <Menu fluid vertical tabular>
-                        <Menu.Item number = {0} name='bio' active={activeItem === 'bio'} onClick={this.handleItemClick} />
+                        <Menu.Item number = {0} name='bio' active={activeItem === 'bio'} onClick={this.getOne()} />
                         <Menu.Item number = {1} name='pics' active={activeItem === 'pics'} onClick={this.handleItemClick} />
                         <Menu.Item number = {2} name='companies' active={activeItem === 'companies'} onClick={this.handleItemClick} />
                         <Menu.Item number = {3} name='links' active={activeItem === 'links'} onClick={this.handleItemClick} />
@@ -76,11 +79,17 @@ Clicked(){
                 </Grid.Column>
 
                 <Grid.Column stretched width={12}>
-                    <Segment>
-                        {this.state.number}
-                    </Segment>
+                        <div>
+<MailList></MailList>
+
+                        </div>
                 </Grid.Column>
             </Grid>
         )
     }
 }
+
+{/*<Switch>*/}
+{/*<Route path="/" component={MailList} />*/}
+{/*<Route path="/:id" component={Mail} />*/}
+{/*</Switch>*/}
