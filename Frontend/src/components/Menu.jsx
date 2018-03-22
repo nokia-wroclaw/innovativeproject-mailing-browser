@@ -4,6 +4,12 @@ import axios from 'axios';
 import Mail from './Mail.jsx';
 import MailList from './MailList';
 //import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import {render} from 'react-dom';
+
+import Home from './Home';
+import {Root} from './Root';
+import {BrowserRouter as Router,Route, Switch } from 'react-router-dom';
+
 
 export default class MenuExample extends Component {
 
@@ -11,9 +17,8 @@ export default class MenuExample extends Component {
         super();
         this.state = {
             mails: [],
-            activeItem: 'bio',
-            text: 'fsfdsfsdsdf',
-            number: 0
+            activeItem: 'mail1',
+            text: 'fsfdsfsdsdf'
         };
     }
 
@@ -71,17 +76,18 @@ Clicked(){
             <Grid>
                 <Grid.Column width={4}>
                     <Menu fluid vertical tabular>
-                        <Menu.Item number = {0} name='bio' active={activeItem === 'bio'} onClick={this.getOne()} />
-                        <Menu.Item number = {1} name='pics' active={activeItem === 'pics'} onClick={this.handleItemClick} />
-                        <Menu.Item number = {2} name='companies' active={activeItem === 'companies'} onClick={this.handleItemClick} />
-                        <Menu.Item number = {3} name='links' active={activeItem === 'links'} onClick={this.handleItemClick} />
+                        <Menu.Item  name='mail1' active={activeItem === 'mail1'} onClick={this.handleItemClick}>blabl</Menu.Item>
+                        <Menu.Item  name='mail2' active={activeItem === 'mail2'} onClick={this.handleItemClick} > fg</Menu.Item>
+                        <Menu.Item  name='mail3' active={activeItem === 'mail3'} onClick={this.handleItemClick} > gf</Menu.Item>
+                        <Menu.Item  name='mail4' active={activeItem === 'mail4'} onClick={this.handleItemClick} > fg</Menu.Item>
                     </Menu>
                 </Grid.Column>
 
                 <Grid.Column stretched width={12}>
                         <div>
-<MailList></MailList>
-
+                            <Segment>
+                                {this.props.comp}
+                            </Segment>
                         </div>
                 </Grid.Column>
             </Grid>
@@ -89,7 +95,13 @@ Clicked(){
     }
 }
 
-{/*<Switch>*/}
-{/*<Route path="/" component={MailList} />*/}
-{/*<Route path="/:id" component={Mail} />*/}
-{/*</Switch>*/}
+// <Switch>
+// <Route path="/" component={MailList} />
+// <Route path="/:id" component={Mail} />
+// </Switch>
+//
+// <Switch>
+//     <Route exact path="/" component={Home} />
+//     <Route path="/mail" component={Mail} />
+//     <Route path="/maillist" component={MailList} />
+// </Switch>

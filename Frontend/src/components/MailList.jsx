@@ -8,10 +8,12 @@ import _ from 'lodash';
 
 export default class MailList extends Component {
 
-    constructor() {
+    constructor(){
         super();
         this.state = {
-            mails: []
+            mails: [],
+            activeItem: 'mail1',
+            text: 'fsfdsfsdsdf'
         };
     }
 
@@ -34,10 +36,27 @@ export default class MailList extends Component {
             return <li key = {k}> {mail.name} </li>;
         });
 
-        return(
-                    <Segment>
-<ul>{mails}</ul>
-                    </Segment>
+        const { activeItem } = this.state;
+
+        return (
+            <Grid>
+                <Grid.Column width={4}>
+                    <Menu fluid vertical tabular>
+                        <Menu.Item  name='mail1' active={activeItem === 'mail1'} onClick={this.handleItemClick}> mail1</Menu.Item>
+                        <Menu.Item  name='mail2' active={activeItem === 'mail2'} onClick={this.handleItemClick} > mail2</Menu.Item>
+                        <Menu.Item  name='mail3' active={activeItem === 'mail3'} onClick={this.handleItemClick} > mail3</Menu.Item>
+                        <Menu.Item  name='mail4' active={activeItem === 'mail4'} onClick={this.handleItemClick} > mail4</Menu.Item>
+                    </Menu>
+                </Grid.Column>
+
+                <Grid.Column stretched width={12}>
+                    <div>
+                        <Segment>
+                            {mails}
+                        </Segment>
+                    </div>
+                </Grid.Column>
+            </Grid>
         )
     }
 }

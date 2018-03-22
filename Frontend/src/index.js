@@ -6,6 +6,8 @@ import MenuExample from './components/Menu';
 import registerServiceWorker from './registerServiceWorker';
 import {Root} from './components/Root';
 import {BrowserRouter as Router,Route, Switch } from 'react-router-dom';
+import MailList from "./components/MailList";
+import Mail from "./components/Mail";
 
 
 class App extends React.Component{
@@ -13,13 +15,13 @@ class App extends React.Component{
         return (
             <Router>
                 <div>
-                    <Root>
+                    <Home>
                         <Switch>
-                            <Route exact path="/" component={Home} />
-                            <Route path="/menu" component={MenuExample} />
-                            <Route path="/home" component={Home} />
+                            <Route exact path="/" />
+                            <Route path="/maillist" component={MailList} />
+                            <Route path="/mail" component={Mail} />
                         </Switch>
-                    </Root>
+                    </Home>
                 </div>
             </Router>
         )

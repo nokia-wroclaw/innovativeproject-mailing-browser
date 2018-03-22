@@ -51,7 +51,7 @@ clicked(){
         <MenuExampleSecondaryPointing/>
         </div>
         <div>
-<MenuExample/>
+            {this.props.children}
         <button onClick ={this.clicked}>TheButton</button>
         </div>
     </div>

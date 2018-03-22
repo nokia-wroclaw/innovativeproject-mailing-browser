@@ -1,6 +1,6 @@
 import React from 'react';
+import Home from './Home';
 
-import MenuExampleSecondaryPointing from './MenuPointing';
 
 export class Root extends React.Component{
     render(){
