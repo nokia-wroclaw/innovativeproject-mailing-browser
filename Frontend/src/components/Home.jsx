@@ -32,10 +32,8 @@ export class Home extends Component {
             });
     }
 
-
   render() {
       const { activeItem } = this.state;
-      //console.log(this.props.params.id.bind(this));
 
     return(
       <div>
@@ -43,22 +41,7 @@ export class Home extends Component {
         <MenuExampleSecondaryPointing/>
         </div>
         <div>
-            <Grid>
-                <Grid.Column width={4}>
-                    <Menu fluid vertical tabular>
-                        <Menu.Item  name='mail1' active={activeItem === 'mail1'} onClick={this.handleItemClick}> {this.props.params.id} </Menu.Item>
-                        <Menu.Item  name='mail2' active={activeItem === 'mail2'} onClick={this.handleItemClick} > 2 </Menu.Item>
-                        <Menu.Item  name='mail3' active={activeItem === 'mail3'} onClick={this.handleItemClick} > 3 </Menu.Item>
-                        <Menu.Item  name='mail4' active={activeItem === 'mail4'} onClick={this.handleItemClick} > 4 </Menu.Item>
-                    </Menu>
-                </Grid.Column>
-
-                <Grid.Column stretched width={12}>
-                    <div>
                         {this.props.children}
-                    </div>
-                </Grid.Column>
-            </Grid>
         </div>
     </div>
 

@@ -33,7 +33,7 @@ export default class MailList extends Component {
 
     render() {
         const mails = _.map(this.state.mails, (mail, k) =>{
-            return <li key = {k}> <Link to="/mail"> {mail.name}</Link> </li>;
+            return <li key = {k}> <Link to={"/mail/"+k}> {mail.name}</Link> </li>;
         });
 
 

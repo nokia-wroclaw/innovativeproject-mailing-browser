@@ -30,13 +30,29 @@ export default class Mail extends Component {
     }
 
     render() {
+        const { activeItem } = this.state;
 
         return (
-            <Segment>
-                Autor maila, <br/>
-                Tresc maila
-            </Segment>
 
+            <Grid>
+            <Grid.Column width={4}>
+            <Menu fluid vertical tabular>
+        <Menu.Item  name='mail1' active={activeItem === 'mail1'} onClick={this.handleItemClick}> {this.props.params.id} </Menu.Item>
+        <Menu.Item  name='mail2' active={activeItem === 'mail2'} onClick={this.handleItemClick} > 2 </Menu.Item>
+        <Menu.Item  name='mail3' active={activeItem === 'mail3'} onClick={this.handleItemClick} > 3 </Menu.Item>
+        <Menu.Item  name='mail4' active={activeItem === 'mail4'} onClick={this.handleItemClick} > 4 </Menu.Item>
+        </Menu>
+    </Grid.Column>
+
+        <Grid.Column stretched width={12}>
+            <div>
+                <Segment>
+                    ut maila,
+                    Tresc maila
+                </Segment>
+            </div>
+            </Grid.Column>
+        </Grid>
 
         )
     }
