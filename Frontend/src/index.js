@@ -17,9 +17,9 @@ class App extends React.Component{
                 <div>
                     <Home>
                         <Switch>
-                            <Route exact path="/" />
-                            <Route path="/maillist" component={MailList} />
+                            <Route exact path="/" component={MailList}/>
                             <Route path="/mail" component={Mail} />
+                            <Route path="/mail/:id" component={Mail} />
                         </Switch>
                     </Home>
                 </div>

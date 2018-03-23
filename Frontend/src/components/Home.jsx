@@ -1,60 +1,67 @@
 import React, { Component } from 'react';
 import '../App.css';
-import MenuExample from './Menu';
 import MenuExampleSecondaryPointing from './MenuPointing';
-import _ from 'lodash';
 import { request } from 'http';
+import { Grid, Menu, Segment } from 'semantic-ui-react'
 import axios from 'axios';
-
 
 export class Home extends Component {
 
-constructor(){
-  super();
-    this.state = {
-        mails: {}
-    };
-}
-// clicked(){
-//   console.log('the butt was clicked');
-// }
+    constructor(){
+        super();
+        this.state = {
+            mails: [],
+            activeItem: 'mail1',
+            text: 'fsfdsfsdsdf'
+        };
+    }
 
-componentWillMount(){
-this.search();
-}
+    handleItemClick = (e, { name}) => this.setState({ activeItem: name});
 
-componentDidMount(){
+    componentDidMount(){
+        axios.get("db.json")
+            .then( (response) => {
+                console.log(response);
+                this.setState({
+                    mails: response.data.mail,
+                    total: response.data.mail.length
+                });
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
 
-  }
 
-updateSearch(){
-  this.search(this.refs.query.value)
-}
-
-clicked(){
-  console.log("ul click");
-}
   render() {
-    // var mails = _.map(this.state.mails, (mail, k) =>{
-    //   return <li key = {k}> {mail.name} </li>;
-    // });
-    
+      const { activeItem } = this.state;
+      //console.log(this.props.params.id.bind(this));
 
-    //var users = this.state.users.firstName
-    //console.log(mails);
     return(
       <div>
-      <input ref="query" onChange={(e)=>{this.updateSearch();}}type="text"/>
-
-      {/*<ul onClick ={this.clicked}>{mails}</ul>*/}
         <div>
         <MenuExampleSecondaryPointing/>
         </div>
         <div>
-            {this.props.children}
-        <button onClick ={this.clicked}>TheButton</button>
+            <Grid>
+                <Grid.Column width={4}>
+                    <Menu fluid vertical tabular>
+                        <Menu.Item  name='mail1' active={activeItem === 'mail1'} onClick={this.handleItemClick}> {this.props.params.id} </Menu.Item>
+                        <Menu.Item  name='mail2' active={activeItem === 'mail2'} onClick={this.handleItemClick} > 2 </Menu.Item>
+                        <Menu.Item  name='mail3' active={activeItem === 'mail3'} onClick={this.handleItemClick} > 3 </Menu.Item>
+                        <Menu.Item  name='mail4' active={activeItem === 'mail4'} onClick={this.handleItemClick} > 4 </Menu.Item>
+                    </Menu>
+                </Grid.Column>
+
+                <Grid.Column stretched width={12}>
+                    <div>
+                        {this.props.children}
+                    </div>
+                </Grid.Column>
+            </Grid>
         </div>
     </div>
+
       );
     }
 
