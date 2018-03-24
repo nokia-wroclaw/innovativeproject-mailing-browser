@@ -1,71 +1,67 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import '../App.css';
-import { Grid, Menu, Segment } from 'semantic-ui-react'
-import { request } from 'http';
+import {Grid, Menu, Segment} from 'semantic-ui-react'
+import {request} from 'http';
 import axios from 'axios';
+import {Link} from 'react-router-dom'
 
 export default class Mail extends Component {
 
-    constructor(){
+    constructor() {
         super();
         this.state = {
-            mails: [],
-            activeItem: 'mail1',
+            mail: null,
+            activeItem: '1',
             text: 'fsfdsfsdsdf',
             name: 'def'
         };
     }
 
-    handleItemClick = (e, { name}) => this.setState({ activeItem: name});
+    getOne = (index) => {
+        return axios.get("/db.json")
+            .then(response => response.data.mail[index]);
+    };
 
-    componentDidMount(){
-        axios.get("db.json")
-            .then( (response) => {
-                console.log(response);
-                this.setState({
-                    mails: response.data.mail,
-                    total: response.data.mail.length
-                });
-            })
-            .catch(function (error) {
-                console.log('error');
-                console.log(error);
-            });
+    componentDidMount() {
+
+        this.getOne(this.props.match.params.id).then((result) => {
+            this.setState({mail: result, activeItem: this.props.match.params.id});
+        });
     }
 
-    getOne = (index) => {
-    return axios.get("db.json")
-.then( response => response.data[index]);
-};
+    handleItemClick = (e, {name}) => {
+        return <Link to={"/mail/"+name}>fdfdfd</Link>
+    };
+
+    renderMail() {
+        return (
+            <Segment>
+                {this.state.mail.name}
+            </Segment>
+        );
+    }
 
     render() {
-        const { activeItem } = this.state;
-
-        this.getOne(1).then((result) => {
-            console.log("coss");
-            console.log(result);
-        });
+        const {activeItem} = this.state;
 
         return (
 
             <Grid>
-            <Grid.Column width={4}>
-            <Menu fluid vertical tabular>
-        <Menu.Item  name='mail1' active={activeItem === 'mail1'} onClick={this.handleItemClick}> {this.props.match.params.id}</Menu.Item>
-        <Menu.Item  name='mail2' active={activeItem === 'mail2'} onClick={this.handleItemClick} > 2 </Menu.Item>
-        <Menu.Item  name='mail3' active={activeItem === 'mail3'} onClick={this.handleItemClick} > 3 </Menu.Item>
-        <Menu.Item  name='mail4' active={activeItem === 'mail4'} onClick={this.handleItemClick} > 4 </Menu.Item>
-        </Menu>
-    </Grid.Column>
+                <Grid.Column width={4}>
+                    <Menu fluid vertical tabular>
+                        <Menu.Item name='0' active={activeItem === '0'} onClick={this.handleItemClick}>1</Menu.Item>
+                        <Menu.Item name='1' active={activeItem === '1'} onClick={this.handleItemClick}> 2 </Menu.Item>
+                        <Menu.Item name='2' active={activeItem === '2'} onClick={this.handleItemClick}> 3 </Menu.Item>
+                        <Menu.Item name='3' active={activeItem === '3'} onClick={this.handleItemClick}> 4 </Menu.Item>
+                    </Menu>
+                </Grid.Column>
 
-        <Grid.Column stretched width={12}>
-            <div>
-                <Segment>
-                    {this.state.mails.length > 0 && this.state.mails ? this.state.mails[0].name : null}
-                </Segment>
-            </div>
-            </Grid.Column>
-        </Grid>
+                <Grid.Column stretched width={12}>
+                    <div>
+                        {this.state.mail ? this.renderMail() : null}
+                    </div>
+                </Grid.Column>
+            </Grid>
 
         )
     }
@@ -74,3 +70,4 @@ export default class Mail extends Component {
 //<Segment>
 //    {this.state.mails.length > 0 && this.state.mails ? this.state.mails[0].name : null}
 //</Segment>
+//<Link to={"/mail/" + this.state.activeItem}> 1</Link>
