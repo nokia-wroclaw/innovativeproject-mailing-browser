@@ -4,19 +4,32 @@
             "id":"1",
             "subject":"Welcome",
             "name":"Andrew",
-            "email":"john@gmail.com"
+            "email":"john@gmail.com",
+            "content":" blablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblabla"
         },
         {
             "id":"2",
             "subject":"Hello",
             "name":"Peter",
-            "email":"fsdn@gfsl.com"
+            "email":"fsdn@gfsl.com",
+            "content":" blablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblabla"
+
         },
         {
             "id":"3",
             "subject":"Good morning",
             "name":"Lucas",
-            "email":"fdsn@gmail.com"
+            "email":"fdsn@gmail.com",
+            "content":" blablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblabla"
+
+        },
+        {
+            "id":"4",
+            "subject":"Good evening",
+            "name":"Malcolm",
+            "email":"malcolm@gmail.com",
+            "content":" blablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblablablablabalbalblabla"
+
         }
     ],
     "companies":[

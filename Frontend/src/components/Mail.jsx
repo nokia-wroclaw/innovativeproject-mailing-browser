@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import '../App.css';
 import {Grid, Menu, Segment} from 'semantic-ui-react'
 import axios from 'axios';
+import _ from 'lodash';
 
 
 export default class Mail extends Component {
@@ -65,51 +66,44 @@ export default class Mail extends Component {
         console.log('click' + name);
     };
 
-    renderMailName() {
+    renderMailNameAndContent() {
         return (
             <Segment>
-                {this.state.mail.name}
+                <h3>{this.state.mail.name} </h3>
+                <br/>
+                <h5>{this.state.mail.content}</h5>
             </Segment>
         );
     }
 
     renderMailSubject(num) {
 
-        console.log("toaktywne:  " + this.activeItem);
-        console.log(this.activeItem === '0');
-        console.log("maile2:");
-        console.log(this.state.mails);
-
         return (
             this.state.mails ? this.state.mails[num].subject : null
         );
     }
 
-    render() {
-        let {activeItem} = this.state;
 
-        console.log("toaktywne222:  " + this.activeItem);
-        console.log("toaktywne222tt:  " + activeItem);
-        console.log("thisstate:  " + this.state);
+    render() {
+        const {activeItem} = this.state;
+
+        const mails = _.map(this.state.mails, (mail, k) => {
+            return <Menu.Item key={k} name = {k.toString()} active={activeItem === k.toString() }
+                              onClick={this.handleItemClick}> {this.state.mails.length > 0 ? this.renderMailSubject(k) : null} </Menu.Item>;
+        });
+
         return (
 
             <Grid>
                 <Grid.Column width={4}>
                     <Menu fluid vertical tabular>
-                        <Menu.Item name='0' active={activeItem === '0'}
-                                   onClick={this.handleItemClick}> {this.state.mails.length > 0 ? this.renderMailSubject(0) : null} </Menu.Item>
-                        <Menu.Item name='1' active={activeItem === '1'}
-                                   onClick={this.handleItemClick}> {this.state.mails.length > 0 ? this.renderMailSubject(0) : null}  </Menu.Item>
-                        <Menu.Item name='2' active={activeItem === '2'}
-                                   onClick={this.handleItemClick}> {this.state.mails.length > 0 ? this.renderMailSubject(1) : null}  </Menu.Item>
-                        <Menu.Item name='3' active={activeItem === '3'}
-                                   onClick={this.handleItemClick}> {this.state.mails.length > 0 ? this.renderMailSubject(2) : null} </Menu.Item>
+                        {mails}
                     </Menu>
                 </Grid.Column>
 
                 <Grid.Column stretched width={12}>
                     <div>
-                        {this.state.mail ? this.renderMailName() : null}
+                        {this.state.mail ? this.renderMailNameAndContent() : null}
                     </div>
                 </Grid.Column>
             </Grid>
