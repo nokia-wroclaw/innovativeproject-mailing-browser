@@ -30,7 +30,7 @@ export default class MenuExample extends Component {
    // handleItemClick = (e, { number }) => this.setState({ activeItem: name, number: number })
 
     Click(){
-        axios.get("db.json")
+        axios.get("/db.json")
             .then( (response) => {
                 console.log("sasafasf");
                 console.log(response.data.mail);

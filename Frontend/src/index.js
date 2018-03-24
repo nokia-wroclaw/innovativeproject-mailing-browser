@@ -11,15 +11,13 @@ class App extends React.Component{
     render() {
         return (
             <Router>
-                <div>
                     <Home>
                         <Switch>
                             <Route exact path="/" component={MailList}/>
-                            <Route path="/mail/:id" component={Mail} />
-                            <Route path="/mail" component={Mail} />
+                            <Route exact path="/mail/:id" component={Mail} />
+                            <Route exact path="/mail" component={Mail} />
                         </Switch>
                     </Home>
-                </div>
             </Router>
         )
     }
