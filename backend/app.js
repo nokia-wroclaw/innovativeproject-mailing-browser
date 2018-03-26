@@ -54,23 +54,19 @@ app.use(function(err, req, res, next) {
 //    },
 
 //  });
-// require('./db_connect');
-connection.authenticate().then(() => {
-    console.log('Connection has been established successfully.');
-  }).catch(err => {
-    console.error('Unable to connect to the database:', err);
-  });
+
+
 ////////////////////  end connection ////////////////////////////////
+require('./db_connect');
 
-
-  // const User = connection.define('user',{   //to swiezo zakomentowane
-	//   firstName: {
-	// 	type: Sequelize.STRING
-	//   },
-	//   lastName: {
-	// 	  type: Sequelize.STRING
-	//   }
-  // }) 
+  const User = connection.define('user',{   //to swiezo zakomentowane
+	  firstName: {
+		type: Sequelize.STRING
+	  },
+	  lastName: {
+		  type: Sequelize.STRING
+	  }
+  }) 
  /* 
   User.sync({force: true}).then(() => {    //tu byl komentarz
   // Table created
