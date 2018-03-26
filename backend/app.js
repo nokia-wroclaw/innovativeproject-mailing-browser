@@ -57,16 +57,17 @@ app.use(function(err, req, res, next) {
 
 
 ////////////////////  end connection ////////////////////////////////
-require('./db_connect');
+const Sequelize = require('sequelize');
+const connection = require('./db_connect');
 
-  const User = connection.define('user',{   //to swiezo zakomentowane
-	  firstName: {
-		type: Sequelize.STRING
-	  },
-	  lastName: {
-		  type: Sequelize.STRING
-	  }
-  }) 
+  // const User = connection.define('user',{   //to swiezo zakomentowane
+	//   firstName: {
+	// 	type: Sequelize.STRING
+	//   },
+	//   lastName: {
+	// 	  type: Sequelize.STRING
+	//   }
+  // }) 
  /* 
   User.sync({force: true}).then(() => {    //tu byl komentarz
   // Table created

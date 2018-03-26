@@ -1,6 +1,6 @@
 /////////////////////   Connection to db   //////////////////////////
 const Sequelize = require('sequelize');
-const connection = new Sequelize('dataBase_name', 'postgres','haslo', {
+const connection = new Sequelize('postgres', 'postgres','1234', {
   host: 'localhost',
   dialect: 'postgres',
   operatorsAliases: false,
