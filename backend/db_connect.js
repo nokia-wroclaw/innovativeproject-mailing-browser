@@ -20,4 +20,31 @@ connection.authenticate().then(() => {
     console.error('Unable to connect to the database:', err);
   });
 
+    // const User = connection.define('user',{  
+	//   firstName: {
+	// 	type: Sequelize.STRING
+	//   },
+	//   lastName: {
+	// 	  type: Sequelize.STRING
+	//   }
+  // }) 
+ /* 
+  User.sync({force: true}).then(() => {  
+  // Table created
+  return User.create({
+    firstName: 'John',
+    lastName: 'Hancock'
+  });
+});*/
+  
+// connection.sync().then(function(){    
+// 	User.findById(1).then(function(user) {
+// 		console.log(user.dataValues);
+// 	});
+// }); 
+
+// connection.sync({
+// 	logging: console.log
+// });
+
 module.exports=connection
