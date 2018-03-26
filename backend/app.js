@@ -6,9 +6,9 @@ var Imap = require('imap'),
 var index = require('./routes/index');
 var users = require('./routes/users');
 
-const Sequelize = require('sequelize');   //to connect with database
-const connection = require('./db_connect'); //handle for specific database
 
+const Sequelize = require('sequelize');   //to connect with database
+const connection = require('./db_create'); //handle for specific database
 var imap = require('./mailbox_connect'); //to connect with mailbox
 
 module.exports = app;
