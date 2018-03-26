@@ -111,7 +111,7 @@ connection.sync({
 console.log('START RECEIVING MAILS');
 var imap = new Imap({
   user: 'innovative.project@outlook.com',
-  password: 'password',
+  password: 'MailingGroup',
   host: 'imap-mail.outlook.com',
   port: 993,
   tls: true
@@ -136,7 +136,7 @@ imap.once('ready', function() {
         stream.on('data', function(chunk) {
           buffer += chunk.toString('utf8');
         });
-        stream.once('end', function() {
+        stream.once('end', function() {    /////////
           console.log(prefix + 'Parsed header: %s', inspect(Imap.parseHeader(buffer)));
         });
       });
