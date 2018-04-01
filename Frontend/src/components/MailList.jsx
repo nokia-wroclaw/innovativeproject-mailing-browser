@@ -13,8 +13,7 @@ export default class MailList extends Component {
         super();
         this.state = {
             mails: [],
-            activeItem: 'mail1',
-            text: 'fsfdsfsdsdf'
+            activeItem: 'mail1'
         };
     }
 

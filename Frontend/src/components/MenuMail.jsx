@@ -5,15 +5,13 @@ import axios from 'axios';
 import _ from 'lodash';
 
 
-export default class Mail extends Component {
+export default class MenuMail extends Component {
     constructor() {
         super();
         this.state = {
             mail: null,
             mails: [],
-            activeItem: '1',
-            text: 'fsfdsfsdsdf',
-            name: 'def'
+            activeItem: '0'
         };
     }
 
@@ -76,11 +74,19 @@ export default class Mail extends Component {
         );
     }
 
-    renderMailSubject(num) {
+    getNotFullContent(num){
+        let string = "";
+        for (let x = 0; x<50 ; x++){
+            string += (this.state.mails.length > 0 ? this.state.mails[num].content[x] : null)
+        }
+return string+"...";
+    }
 
-        return (
-            this.state.mails ? this.state.mails[num].subject : null
-        );
+    renderMailSubject(num) {
+        return <div>
+            <h2>  {this.state.mails ? this.state.mails[num].subject : null}</h2>
+            <p>{this.getNotFullContent(num)}</p>
+        </div>
     }
 
 
@@ -88,8 +94,11 @@ export default class Mail extends Component {
         const {activeItem} = this.state;
 
         const mails = _.map(this.state.mails, (mail, k) => {
-            return <Menu.Item key={k} name = {k.toString()} active={activeItem === k.toString() }
-                              onClick={this.handleItemClick}> {this.state.mails.length > 0 ? this.renderMailSubject(k) : null} </Menu.Item>;
+            return <Menu.Item key={k} name={k.toString()} active={activeItem === k.toString()}
+                              onClick={this.handleItemClick}>
+                      {this.renderMailSubject(k)}
+
+            </Menu.Item>;
         });
 
         return (

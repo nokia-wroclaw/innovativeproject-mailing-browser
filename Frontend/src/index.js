@@ -4,7 +4,8 @@ import './index.css';
 import Home from './components/Home';
 import {BrowserRouter as Router,Route, Switch } from 'react-router-dom';
 import MailList from "./components/MailList";
-import Mail from "./components/Mail";
+import MenuMail from "./components/MenuMail";
+import SingleMail from "./components/SingleMail";
 
 
 class App extends React.Component{
@@ -14,8 +15,9 @@ class App extends React.Component{
                     <Home>
                         <Switch>
                             <Route exact path="/" component={MailList}/>
-                            <Route exact path="/mail/:id" component={Mail} />
-                            <Route exact path="/mail" component={Mail} />
+                            <Route exact path="/mail" component={MenuMail} />
+                            <Route exact path="/mail/:id" component={MenuMail} />
+                            <Route exact path="/singlemail/:id" component={SingleMail} />
                         </Switch>
                     </Home>
             </Router>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Grid, Menu, Segment } from 'semantic-ui-react'
 import axios from 'axios';
-import Mail from './Mail.jsx';
+import Mail from './MenuMail.jsx';
 import MailList from './MailList';
 //import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import {render} from 'react-dom';
