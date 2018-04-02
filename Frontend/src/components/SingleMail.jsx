@@ -18,8 +18,6 @@ export default class SingleMail extends Component {
     };
 
     componentDidMount() {
-        console.log("didmount");
-
         this.getOneMail(this.props.match.params.id).then((result) => {
             this.setState({mail: result, activeItem: this.props.match.params.id ? this.props.match.params.id : '0'});
         });
@@ -36,7 +34,6 @@ export default class SingleMail extends Component {
     }
 
     render() {
-
         return (
             <div>
             <Container text>
@@ -44,7 +41,6 @@ export default class SingleMail extends Component {
                 Od kogo<br/>
                 Do kogo<br/>
                 Inne szczegóły<br/>
-
                 {this.state.mail ? this.renderMailNameAndContent() : null}
             </Container>
             </div>

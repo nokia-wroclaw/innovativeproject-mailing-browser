@@ -3,6 +3,7 @@ import '../App.css';
 import {Grid, Menu, Segment} from 'semantic-ui-react'
 import axios from 'axios';
 import _ from 'lodash';
+import {Link} from 'react-router-dom'
 
 
 export default class MenuMail extends Component {
@@ -35,39 +36,23 @@ export default class MenuMail extends Component {
     };
 
     componentDidMount() {
-        console.log("didmount");
-
         this.getOneMail(this.props.match.params.id).then((result) => {
             this.setState({mail: result, activeItem: this.props.match.params.id ? this.props.match.params.id : '0'});
         });
-
         this.getAllMails();
-
-        console.log("maile:");
-        console.log(this.state.mails[0]);
-        console.log("mail:");
-        console.log(this.state.mail);
-    }
-
-    componentDidUpdate() {
-        console.log("didupdate");
-
     }
 
     handleItemClick = (e, {name}) => {
         this.props.history.push('/mail/' + name);
-
         this.getOneMail(name).then((result) => {
             this.setState({mail: result, activeItem: name})
         });
-
-        console.log('click' + name);
     };
 
     renderMailNameAndContent() {
         return (
             <Segment>
-                <h3>{this.state.mail.name} </h3>
+                <Link to={"/singlemail/" + this.state.activeItem}>  <h3>{this.state.mail.name} </h3> </Link>
                 <br/>
                 <h5>{this.state.mail.content}</h5>
             </Segment>
@@ -89,39 +74,29 @@ return string+"...";
         </div>
     }
 
-
     render() {
         const {activeItem} = this.state;
 
         const mails = _.map(this.state.mails, (mail, k) => {
             return <Menu.Item key={k} name={k.toString()} active={activeItem === k.toString()}
                               onClick={this.handleItemClick}>
-                      {this.renderMailSubject(k)}
-
+                   {this.renderMailSubject(k)}
             </Menu.Item>;
         });
 
         return (
-
             <Grid>
                 <Grid.Column width={4}>
                     <Menu fluid vertical tabular>
                         {mails}
                     </Menu>
                 </Grid.Column>
-
                 <Grid.Column stretched width={12}>
                     <div>
                         {this.state.mail ? this.renderMailNameAndContent() : null}
                     </div>
                 </Grid.Column>
             </Grid>
-
         )
     }
 }
-
-//<Segment>
-//    {this.state.mails.length > 0 && this.state.mails ? this.state.mails[0].name : null}
-//</Segment>
-//<Link to={"/mail/" + this.state.activeItem}> 1</Link>

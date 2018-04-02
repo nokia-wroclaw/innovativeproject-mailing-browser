@@ -14,7 +14,7 @@ class App extends React.Component{
             <Router>
                     <Home>
                         <Switch>
-                            <Route exact path="/" component={MailList}/>
+                            <Route exact path="/" component={MenuMail}/>
                             <Route exact path="/mail" component={MenuMail} />
                             <Route exact path="/mail/:id" component={MenuMail} />
                             <Route exact path="/singlemail/:id" component={SingleMail} />
