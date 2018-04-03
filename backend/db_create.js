@@ -3,7 +3,13 @@ const connection = require('./db_connect'); //handle for specific database
 
 const User = connection.define('user',{
     firstName: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        get: function () {
+            return JSON.parse(this.getDataValue(''));
+        },
+        set: function (value) {
+            return this.setDataValue('rules', JSON.stringify(value));
+        }
     },
     lastName: {
         type: Sequelize.STRING
@@ -45,6 +51,28 @@ Mail.sync({force: true}).then(() => {
 Thread.sync({force: true}).then(() => {
     return Thread.create();
 });
+/*
+connection.sync({
+    force: true
+}).then(function()
+{
+    User.create({
+        firstName: 'Jacek',
+        lastName: 'Placek',
+    })
+});*/
+
+
+
+/*
+User.sync({force: true}).then(() => {
+    User.bulkCreate([
+    {firstName: 'John',
+        lastName: 'Lock'}],
+    { validate: true }).catch(errors => {
+
+});*/
+
 
 module.exports=connection
 
