@@ -3,13 +3,7 @@ const connection = require('./db_connect'); //handle for specific database
 
 const User = connection.define('user',{
     firstName: {
-        type: Sequelize.STRING,
-        get: function () {
-            return JSON.parse(this.getDataValue(''));
-        },
-        set: function (value) {
-            return this.setDataValue('rules', JSON.stringify(value));
-        }
+        type: Sequelize.STRING
     },
     lastName: {
         type: Sequelize.STRING
@@ -17,19 +11,31 @@ const User = connection.define('user',{
 }, {timestamps:false} );
 
 const Mail = connection.define('mail',{
-    topic : {
+    subject : {
         type: Sequelize.STRING
     },
-    user_id: {
+    from: {
         type: Sequelize.STRING
     },
-    body: {
+    to: {
         type: Sequelize.STRING
     },
-    attachment: {
+    date: {
         type: Sequelize.STRING
     },
-    address: {
+    text: {
+        type: Sequelize.STRING
+    },
+    textAsHtml: {
+        type: Sequelize.STRING
+    },
+    number: {
+        type: Sequelize.STRING
+    },
+    refeerences: {
+        type: Sequelize.STRING
+    },
+    messageID: {
         type: Sequelize.STRING
     },
 }, {timestamps:false} );
@@ -51,27 +57,41 @@ Mail.sync({force: true}).then(() => {
 Thread.sync({force: true}).then(() => {
     return Thread.create();
 });
-/*
+
+
 connection.sync({
     force: true
 }).then(function()
 {
-    User.create({
+    var userInstance = User.build({
         firstName: 'Jacek',
         lastName: 'Placek',
     })
-});*/
+    userInstance.save()
+ //   User.bulkCreate([
+ //       {
+ //           firstName: 'Marek',
+ //           lastName: 'sadfasdgad',
+ //       }
+ //   ])
+});
 
-
-
-/*
-User.sync({force: true}).then(() => {
-    User.bulkCreate([
-    {firstName: 'John',
-        lastName: 'Lock'}],
-    { validate: true }).catch(errors => {
-
-});*/
+connection.sync({
+    force: true
+}).then(function()
+{
+    var userInstance = User.build({
+        firstName: 'Jacek',
+        lastName: 'fhjfhj',
+    })
+    userInstance.save()
+    //   User.bulkCreate([
+    //       {
+    //           firstName: 'Marek',
+    //           lastName: 'sadfasdgad',
+    //       }
+    //   ])
+});
 
 
 module.exports=connection
