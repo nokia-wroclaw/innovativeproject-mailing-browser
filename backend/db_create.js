@@ -1,6 +1,9 @@
 const Sequelize = require('sequelize');
 const connection = require('./db_connect'); //handle for specific database
 
+var MyMails = require('./mailbox_connect');
+var mails = MyMails.mails;
+
 const User = connection.define('user',{
     firstName: {
         type: Sequelize.STRING
@@ -11,31 +14,25 @@ const User = connection.define('user',{
 }, {timestamps:false} );
 
 const Mail = connection.define('mail',{
-    subject : {
+    Subject : {
         type: Sequelize.STRING
     },
-    from: {
+    From: {
         type: Sequelize.STRING
     },
-    to: {
+    To: {
         type: Sequelize.STRING
     },
-    date: {
-        type: Sequelize.STRING
+    Date: {
+        type: Sequelize.DATE
     },
-    text: {
-        type: Sequelize.STRING
+    Text: {
+        type: Sequelize.TEXT
     },
-    textAsHtml: {
-        type: Sequelize.STRING
+    TextAsHtml: {
+        type: Sequelize.TEXT
     },
-    number: {
-        type: Sequelize.STRING
-    },
-    refeerences: {
-        type: Sequelize.STRING
-    },
-    messageID: {
+    messageId: {
         type: Sequelize.STRING
     },
 }, {timestamps:false} );
@@ -58,41 +55,48 @@ Thread.sync({force: true}).then(() => {
     return Thread.create();
 });
 
+/*var mail = {subject : "temat", from : "adress", to :"do kogo",
+    date : "data", text : "text", textAsHtml: "html",
+     messageId : "id"};
 
-connection.sync({
-    force: true
-}).then(function()
-{
-    var userInstance = User.build({
-        firstName: 'Jacek',
-        lastName: 'Placek',
-    })
-    userInstance.save()
- //   User.bulkCreate([
- //       {
- //           firstName: 'Marek',
- //           lastName: 'sadfasdgad',
- //       }
- //   ])
-});
+const obj = {
+    firstN:"leszek",
+    lastN:"peszek"
+}
+User.create({
+    firstName:obj.firstN,
+    lastName:obj.lastN
+})
+*/
+/*
+const createPromises = mails.map((mail) => {
+    return Mail.create({
+            Subject: mail.subject,
+            From: mail.from,
+            To: mail.to[0].address,
+            Date: mail.date,
+            Text: mail.text,
+            TextAsHtml: mail.textAsHtml,
+            messageId: mail.messageID
+        });
+});*/
+/*
+//const createPromises = mails.map((mail) => {
+Mail.create({
+        Subject: mail.subject,
+        From: mail.from,
+        To: mail.to,
+        Date: mail.date,
+        Text: mail.text,
+        TextAsHtml: mail.textAsHtml,
+        messageID: mail.messageId
+    });
+*/
 
-connection.sync({
-    force: true
-}).then(function()
-{
-    var userInstance = User.build({
-        firstName: 'Jacek',
-        lastName: 'fhjfhj',
-    })
-    userInstance.save()
-    //   User.bulkCreate([
-    //       {
-    //           firstName: 'Marek',
-    //           lastName: 'sadfasdgad',
-    //       }
-    //   ])
-});
-
-
-module.exports=connection
+/*
+Promise.all(createPromises).then((results) => {
+    console.log(results)
+});*/
+//module.exports=connection
+module.exports=Mail
 
