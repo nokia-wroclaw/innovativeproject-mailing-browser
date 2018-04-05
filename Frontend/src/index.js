@@ -3,9 +3,9 @@ import {render} from 'react-dom';
 import './index.css';
 import Home from './components/Home';
 import {BrowserRouter as Router,Route, Switch } from 'react-router-dom';
-import MailList from "./components/MailList";
+import MailList from "./components/SingleThread";
 import MenuMail from "./components/MenuMail";
-import SingleMail from "./components/SingleMail";
+import SingleThread from "./components/SingleThread";
 
 
 class App extends React.Component{
@@ -17,7 +17,7 @@ class App extends React.Component{
                             <Route exact path="/" component={MenuMail}/>
                             <Route exact path="/mail" component={MenuMail} />
                             <Route exact path="/mail/:id" component={MenuMail} />
-                            <Route exact path="/singlemail/:id" component={SingleMail} />
+                            <Route exact path="/singlethread/:id" component={SingleThread} />
                         </Switch>
                     </Home>
             </Router>

@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
 import '../App.css';
-import {Grid, Menu, Segment} from 'semantic-ui-react'
+import {Grid, Menu, Segment, Image} from 'semantic-ui-react'
 import axios from 'axios';
 import _ from 'lodash';
 import {Link} from 'react-router-dom'
+//import myImage from '/mailImage.png';
 
 
 export default class MenuMail extends Component {
@@ -11,8 +12,7 @@ export default class MenuMail extends Component {
         super();
         this.state = {
             mail: null,
-            mails: [],
-            activeItem: '0'
+            mails: []
         };
     }
 
@@ -37,26 +37,9 @@ export default class MenuMail extends Component {
 
     componentDidMount() {
         this.getOneMail(this.props.match.params.id).then((result) => {
-            this.setState({mail: result, activeItem: this.props.match.params.id ? this.props.match.params.id : '0'});
+            this.setState({mail: result});
         });
         this.getAllMails();
-    }
-
-    handleItemClick = (e, {name}) => {
-        this.props.history.push('/mail/' + name);
-        this.getOneMail(name).then((result) => {
-            this.setState({mail: result, activeItem: name})
-        });
-    };
-
-    renderMailNameAndContent() {
-        return (
-            <Segment>
-                <Link to={"/singlemail/" + this.state.activeItem}>  <h3>{this.state.mail.name} </h3> </Link>
-                <br/>
-                <h5>{this.state.mail.content}</h5>
-            </Segment>
-        );
     }
 
     getNotFullContent(num){
@@ -67,35 +50,35 @@ export default class MenuMail extends Component {
 return string+"...";
     }
 
-    renderMailSubject(num) {
+    renderMails(num) {
         return <div>
-            <h2>  {this.state.mails ? this.state.mails[num].subject : null}</h2>
+            <h2>{this.state.mails ? this.state.mails[num].subject : null}</h2>
+             <h4>{this.state.mails[num].name} </h4>
             <p>{this.getNotFullContent(num)}</p>
         </div>
     }
 
     render() {
-        const {activeItem} = this.state;
-
         const mails = _.map(this.state.mails, (mail, k) => {
-            return <Menu.Item key={k} name={k.toString()} active={activeItem === k.toString()}
-                              onClick={this.handleItemClick}>
-                   {this.renderMailSubject(k)}
-            </Menu.Item>;
+            return (
+                <Grid.Row color='olive' key={k} name={k.toString()}>
+                    <Grid.Column width={3}>
+                        <Image src='/../mailImage.png' />
+                    </Grid.Column>
+                    <Grid.Column width={13}>
+                        <Link to={"/singlemail/" + k } style={{color: 'black'}}>
+                        <div>
+                            {this.renderMails(k)}
+                        </div>
+                        </Link>
+                    </Grid.Column>
+                </Grid.Row>
+        )
         });
 
         return (
-            <Grid>
-                <Grid.Column width={4}>
-                    <Menu fluid vertical tabular>
-                        {mails}
-                    </Menu>
-                </Grid.Column>
-                <Grid.Column stretched width={12}>
-                    <div>
-                        {this.state.mail ? this.renderMailNameAndContent() : null}
-                    </div>
-                </Grid.Column>
+            <Grid celled>
+                {mails}
             </Grid>
         )
     }
