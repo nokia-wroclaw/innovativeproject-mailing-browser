@@ -3,7 +3,6 @@ import '../App.css';
 import { Container, Header } from 'semantic-ui-react'
 import axios from 'axios';
 
-
 export default class SingleMail extends Component {
     constructor() {
         super();
