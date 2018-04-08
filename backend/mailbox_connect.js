@@ -51,6 +51,12 @@ const imap = new Imap({
   function processMessage(msg, seqno) {
     msg.on("body" , function (stream) {
       parser(stream).then(mail => {
+          var ref = "";
+          if(mail.references)
+        {
+            var refs = mail.references.split(",");
+            ref = refs[0];
+        }
           Mail.create({
           Subject: mail.subject,
           From: mail.from.value[0].address,
@@ -59,7 +65,7 @@ const imap = new Imap({
           Text: mail.text,
           TextAsHtml: mail.html,
           messageId: mail.messageId,
-          reference:mail.references
+          reference: ref
       });
 if(mail.references==null){
     Thread.create({
