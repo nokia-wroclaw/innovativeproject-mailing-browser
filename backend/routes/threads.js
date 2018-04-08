@@ -1,7 +1,8 @@
 var express = require('express');
 var router = express.Router();
-const MyMail = require('../db_create')
-var Mail = MyMail.Mail;
+const MyThread = require('../db_create')
+var Thread = MyThread.Thread;
+
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -10,10 +11,11 @@ router.get('/', function(req, res, next) {
 //   res.charset = 'utf-8';
 //   res.write(Mail.textAsHtml);
 
-    Mail.findAll().then((result)=>{
-      res.json(result); //to list all mails
-    res.end();
+    Thread.findAll().then((result)=>{
+        res.json(result); //to list all mails
+        res.end();
     })
+
 
 
 });

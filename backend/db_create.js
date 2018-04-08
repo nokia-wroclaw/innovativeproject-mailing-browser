@@ -4,17 +4,17 @@ const connection = require('./db_connect'); //handle for specific database
 var MyMails = require('./mailbox_connect');
 var mails = MyMails.mails;
 
-const User = connection.define('user',{
+const User = connection.define('user', {
     firstName: {
         type: Sequelize.STRING
     },
     lastName: {
         type: Sequelize.STRING
     },
-}, {timestamps:false} );
+}, {timestamps: false});
 
-const Mail = connection.define('mail',{
-    Subject : {
+const Mail = connection.define('mail', {
+    Subject: {
         type: Sequelize.STRING
     },
     From: {
@@ -35,13 +35,35 @@ const Mail = connection.define('mail',{
     messageId: {
         type: Sequelize.STRING
     },
-}, {timestamps:false} );
+    reference: {
+        type: Sequelize.STRING
+    }
+}, {timestamps: false});
 
-const Thread = connection.define('thread',{
-  name : {
-      type : Sequelize.STRING
-  }
-}, {timestamps:false} );
+const Thread = connection.define('thread', {
+    name: {
+        type: Sequelize.STRING
+    },
+    messageId:{
+    type: Sequelize.STRING
+    }
+
+    // ,
+    // mail_id:{
+    //     type: Sequelize.STRING,
+    //     references:'mails',
+    //     referencesKey:'messageId'
+    // }
+}, {timestamps: false});
+
+
+/*Mail.hasOne(Thread, {
+    foreignKey: {
+        name: 'mail_id',
+       allowNull: false
+    }
+});*/
+//Thread.belongsTo(Mail);
 
 User.sync({force: true}).then(() => {
     return User.create();
@@ -98,5 +120,5 @@ Promise.all(createPromises).then((results) => {
     console.log(results)
 });*/
 //module.exports=connection
-module.exports=Mail
-
+module.exports.Mail = Mail
+module.exports.Thread = Thread
