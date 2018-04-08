@@ -1,3 +1,6 @@
+const Mail = require("./db_create")
+console.log(Mail);
+
 const Imap = require('imap'),
     parser = require('mailparser').simpleParser,
     Promise = require('bluebird');
@@ -44,7 +47,17 @@ const imap = new Imap({
   function processMessage(msg, seqno) {
     msg.on("body" , function (stream) {
       parser(stream).then(mail => {
-      if(mail.references) {   //if there are some references
+          Mail.create({
+          Subject: mail.subject,
+          From: mail.from.value[0].address,
+          To: mail.to.value[0].address,
+          Date: mail.date,
+          Text: mail.text,
+          TextAsHtml: mail.html,
+          messageId: mail.messageId
+      });
+
+      /*if(mail.references) {   //if there are some references
         var x = mail.references.split(",");   //split them by ','
         var ss = x[0];    //first reference is the main mail
          for(i=0; i < mails.length; i++) {    //for all main mails
@@ -60,7 +73,7 @@ const imap = new Imap({
         mails[seqno] = ([{"subject" : mail.subject, "from" : mail.from.value[0].address, "to" : mail.to.value,
         "date" : mail.date, "text" : mail.text, "textAsHtml": mail.html, "number" : seqno,
         "references" : mail.references, "messageID" : mail.messageId}]); 
-      }
+      }*/
       })
     });
   }
