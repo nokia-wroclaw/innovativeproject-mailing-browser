@@ -8,9 +8,7 @@ export class Home extends Component {
         super();
         this.state = {};
     }
-
     render() {
-
         return (
             <div>
                 <div>
@@ -20,11 +18,8 @@ export class Home extends Component {
                     {this.props.children}
                 </div>
             </div>
-
         );
     }
-
 }
-
 
 export default Home;
