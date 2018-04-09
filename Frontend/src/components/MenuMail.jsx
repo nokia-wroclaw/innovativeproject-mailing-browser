@@ -66,7 +66,7 @@ return string+"...";
                         <Image src='/../mailImage.png' />
                     </Grid.Column>
                     <Grid.Column width={13}>
-                        <Link to={"/singlemail/" + k } style={{color: 'black'}}>
+                        <Link to={"/singleThread/" + k } style={{color: 'black'}}>
                         <div>
                             {this.renderMails(k)}
                         </div>
