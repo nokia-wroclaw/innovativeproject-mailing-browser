@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import '../App.css';
 import { Container, Header } from 'semantic-ui-react'
-import {Grid, Menu, Segment, Image} from 'semantic-ui-react'
+import {Grid} from 'semantic-ui-react'
 import axios from 'axios';
 
 export default class SingleThread extends Component {
@@ -13,13 +13,16 @@ export default class SingleThread extends Component {
     }
 
     getOneMail = (index) => {
-        return axios.get("/db.json")
-            .then(response => response.data.mail[index]);
+       // return axios.get("/db.json")
+        var url = "http://localhost:3000/mails/";
+
+        return axios.get(url + index + '/')
+            .then(response => response.data[0]);
     };
 
     componentDidMount() {
         this.getOneMail(this.props.match.params.id).then((result) => {
-            this.setState({mail: result, activeItem: this.props.match.params.id ? this.props.match.params.id : '0'});
+            this.setState({mail: result});
         });
     }
 
@@ -28,7 +31,8 @@ export default class SingleThread extends Component {
         return (
             <div>
                 <br/>
-                <h5>{this.state.mail.content}</h5>
+                <h5>{this.state.mail.TextAsHtml}</h5>
+                {/*<h5>{this.state.mail.content}</h5>*/}
             </div>
         );
     }
@@ -39,7 +43,7 @@ export default class SingleThread extends Component {
                 <Grid celled>
                     <Grid.Row>
                 <Container text>
-                    <Header as ='h2'>{this.state.mail ? this.state.mail.subject : null}</Header>
+                    <Header as ='h2'>{this.state.mail ? this.state.mail.Subject : null}</Header>
                     Od kogo<br/>
                     Do kogo<br/>
                     Inne szczegóły<br/>
