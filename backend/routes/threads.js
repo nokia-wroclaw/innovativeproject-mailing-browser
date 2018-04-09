@@ -9,15 +9,6 @@ var Mail = MyMail.Mail;
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-//   res.writeHead(200,{'Content-Type': 'text/html; charset=utf-8'});
-//   res.contentType('text/html');
-//   res.charset = 'utf-8';
-//   res.write(Mail.textAsHtml);
-
-    // Thread.findAll().then((result)=>{
-    //     res.json(result); //to list all mails
-    //     res.end();
-    // })
     Mail.findAll({
         where: {
             reference: {
@@ -25,12 +16,9 @@ router.get('/', function(req, res, next) {
             }
         }
     }).then((result)=>{
-        res.json(result); //to list all mails
+        res.json(result);
         res.end();
     })
-
-
-
 });
 
 module.exports = router;

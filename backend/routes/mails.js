@@ -13,13 +13,8 @@ const Op = Sequelize.Op
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-//   res.writeHead(200,{'Content-Type': 'text/html; charset=utf-8'});
-//   res.contentType('text/html');
-//   res.charset = 'utf-8';
-//   res.write(Mail.textAsHtml);
     var id = req.params[0];
     Mail.findAll({
-      // include: [{model: Thread}],
       where: {
         reference: Thread.messageId
       }
@@ -32,11 +27,6 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/:id', function(req, res, next) {
-  //   res.writeHead(200,{'Content-Type': 'text/html; charset=utf-8'});
-  //   res.contentType('text/html');
-  //   res.charset = 'utf-8';
-  //   res.write(Mail.textAsHtml);
-      var ID = '';
       Mail.findAll({
         where: {
           id: req.params.id

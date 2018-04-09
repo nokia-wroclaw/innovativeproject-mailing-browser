@@ -17,7 +17,7 @@ const imap = new Imap({
     tls: true
   });
 
-  var mails = [];  //array of mails
+  // var mails = [];  //array of mails
 
   Promise.promisifyAll(imap);
 
@@ -53,51 +53,28 @@ const imap = new Imap({
       parser(stream).then(mail => {
           var ref = "";
           if(mail.references)
-        {
+          {
             var refs = mail.references.split(",");
             ref = refs[0];
-        }
+          }
           Mail.create({
-          Subject: mail.subject,
-          From: mail.from.value[0].address,
-          To: mail.to.value[0].address,
-          Date: mail.date,
-          Text: mail.text,
-          TextAsHtml: mail.html,
-          messageId: mail.messageId,
-          reference: ref
-      });
-if(mail.references==null){
-    Thread.create({
-        name:mail.subject,
-        messageId:mail.messageId
-    })
-}
-
-
+            Subject: mail.subject,
+            From: mail.from.value[0].address,
+            To: mail.to.value[0].address,
+            Date: mail.date,
+            Text: mail.text,
+            TextAsHtml: mail.html,
+            messageId: mail.messageId,
+            reference: ref
+          });
+          if(mail.references==null){
+            Thread.create({
+              name:mail.subject,
+              messageId:mail.messageId
+            })
+          }
       });
     });
   }
-
-
-  JSON.stringify(mails);  //convert json to string
+  
   module.exports=imap;
-  module.exports.mails = mails;
-
-/*if(mail.references) {   //if there are some references
-  var x = mail.references.split(",");   //split them by ','
-  var ss = x[0];    //first reference is the main mail
-   for(i=0; i < mails.length; i++) {    //for all main mails
-    if(mails[i] != null) {    //if specific one exists
-      if(mails[i][0].messageID == ss) {  //if any of existing messageIDs matches the first reference
-        mails[i][mails[i].length] = {"subject" : mail.subject, "from" : mail.from.value[0].address, "to" : mail.to.value,
-        "date" : mail.date, "text" : mail.text, "textAsHtml": mail.html, "number" : seqno,
-        "references" : mail.references, "messageID" : mail.messageId};
-      }
-    }
-  }
-} else {  //if there are no references - it's the main mail so just put it in the array
-  mails[seqno] = ([{"subject" : mail.subject, "from" : mail.from.value[0].address, "to" : mail.to.value,
-  "date" : mail.date, "text" : mail.text, "textAsHtml": mail.html, "number" : seqno,
-  "references" : mail.references, "messageID" : mail.messageId}]);
-}*/

@@ -7,11 +7,10 @@ var mails = require('./routes/mails');
 var users = require('./routes/users');
 var threads = require('./routes/threads');
 
-app.use("/mails",mails)
-app.use("/threads",threads)
+app.use("/singleThread",mails)
+app.use("/",threads)
 
 const Sequelize = require('sequelize');   //to connect with database
 module.exports = app;
 
-//const connection = require('./db_create'); //handle for specific database
 

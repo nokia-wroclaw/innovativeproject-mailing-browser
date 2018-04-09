@@ -1,7 +1,7 @@
 /////////////////////   Connection to db   //////////////////////////
-// var config = require('./config');
+var config = require('./config');
 const Sequelize = require('sequelize');
-const connection = new Sequelize('postgres', 'postgres', '1234', {
+const connection = new Sequelize(config.DB_name, config.DB_user, config.DB_password, {
   host: 'localhost',
   dialect: 'postgres',
   operatorsAliases: false,

@@ -70,7 +70,7 @@ User.sync({force: true}).then(() => {
 });
 
 Mail.sync({force: true}).then(() => {
-    return Mail.create();
+    //return Mail.create();
 });
 
 Thread.sync({force: true}).then(() => {
