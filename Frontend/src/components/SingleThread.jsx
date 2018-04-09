@@ -3,6 +3,7 @@ import '../App.css';
 import { Container, Header } from 'semantic-ui-react'
 import {Grid} from 'semantic-ui-react'
 import axios from 'axios';
+import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 
 export default class SingleThread extends Component {
     constructor() {
@@ -14,7 +15,7 @@ export default class SingleThread extends Component {
 
     getOneMail = (index) => {
        // return axios.get("/db.json")
-        var url = "http://localhost:3000/mails/";
+        var url = "/mails/";
 
         return axios.get(url + index + '/')
             .then(response => response.data[0]);
@@ -28,11 +29,12 @@ export default class SingleThread extends Component {
 
 
     renderMailNameAndContent() {
+        var html = this.state.mail.TextAsHtml;
+
         return (
             <div>
                 <br/>
-                <h5>{this.state.mail.TextAsHtml}</h5>
-                {/*<h5>{this.state.mail.content}</h5>*/}
+                {ReactHtmlParser(html)}
             </div>
         );
     }
@@ -44,9 +46,7 @@ export default class SingleThread extends Component {
                     <Grid.Row>
                 <Container text>
                     <Header as ='h2'>{this.state.mail ? this.state.mail.Subject : null}</Header>
-                    Od kogo<br/>
-                    Do kogo<br/>
-                    Inne szczegóły<br/>
+                    <Header as ='h5'>{this.state.mail ? this.state.mail.Date : null}</Header>
                     {this.state.mail ? this.renderMailNameAndContent() : null}
                 </Container>
                     </Grid.Row>
