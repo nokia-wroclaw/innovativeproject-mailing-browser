@@ -1,7 +1,6 @@
 const MyMail = require('./db_create')
 var Mail = MyMail.Mail;
-const MyThread = require('./db_create')
-var Thread = MyThread.Thread;
+
 
 console.log(Mail);
 
@@ -17,7 +16,6 @@ const imap = new Imap({
     tls: true
   });
 
-  // var mails = [];  //array of mails
 
   Promise.promisifyAll(imap);
 
@@ -67,12 +65,7 @@ const imap = new Imap({
             messageId: mail.messageId,
             reference: ref
           });
-          if(mail.references==null){
-            Thread.create({
-              name:mail.subject,
-              messageId:mail.messageId
-            })
-          }
+
       });
     });
   }
