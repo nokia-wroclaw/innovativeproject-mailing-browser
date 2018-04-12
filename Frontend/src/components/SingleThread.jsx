@@ -15,9 +15,9 @@ export default class SingleThread extends Component {
 
     getOneMail = (index) => {
        // return axios.get("/db.json")
-        var url = "/mails/";
+        var url = "/api/threads/";
 
-        return axios.get(url + index + '/')
+        return axios.get(url + index)
             .then(response => response.data[0]);
     };
 
@@ -34,6 +34,7 @@ export default class SingleThread extends Component {
         return (
             <div>
                 <br/>
+                {this.state.mail ? this.state.mail.id : null}
                 {ReactHtmlParser(html)}
             </div>
         );
