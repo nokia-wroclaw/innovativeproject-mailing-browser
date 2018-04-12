@@ -17,7 +17,7 @@ export default class MenuMail extends Component {
     }
 
     getAllThreads() {
-        axios.get("/")
+        axios.get("/api/threads")
             .then((response) => {
                 console.log(response);
                 this.setState({
@@ -51,7 +51,7 @@ export default class MenuMail extends Component {
     getNotFullContent(num){
         let string = "";
         for (let x = 0; x<5 ; x++){
-           // string += (this.state.threads.length > 0 ? this.state.threads[num].Text[x] : null)
+            string += ((this.state.threads.length > 0 && this.state.threads[num].Text) ? this.state.threads[num].Text[x] : null)
         }
 return string+"...";
     }
@@ -69,13 +69,14 @@ return string+"...";
     render() {
 
         const mails = _.map(this.state.threads, (mail, k) => {
+           var kk = k+1;
             return (
                 <Grid.Row color='olive' key={k} name={k.toString()}>
                     <Grid.Column width={3}>
                         {/*<Image src = {myImage} />*/}
                     </Grid.Column>
                     <Grid.Column width={13}>
-                        <Link to={"/singleThread/" + k } style={{color: 'black'}}>
+                        <Link to={"/singleThread/" + mail.id } style={{color: 'black'}}>
                         <div>
                             {this.renderMails(k)}
                         </div>
