@@ -15,7 +15,7 @@ export default class SingleThread extends Component {
 
     getOneMail = (index) => {
        // return axios.get("/db.json")
-        var url = "/mails/";
+        var url = "/SingleThread/";
 
         return axios.get(url + index + '/')
             .then(response => response.data[0]);
