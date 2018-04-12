@@ -40,17 +40,14 @@ router.get('/threads', function(req, res, next) {
 });
 
 router.get('/threads/:id', function(req, res, next) {
-      Mail.findAll({
-        where: {
-          id: req.params.id
-        }
-      }).then((result)=>{
-        Mail.findAll({
+      Mail.findById(req.params.id).then((result)=>{
+        return Mail.findAll({
           where: {
-            reference: result[0].messageId
+            reference: result.messageId
           }
-        }).then((result2)=>{          
-          res.json(result2);
+        }).then((result2)=>{
+          console.log(result, " casds",  result2)                    
+          res.json([result,...result2]);
           res.end();
         })        
       })
