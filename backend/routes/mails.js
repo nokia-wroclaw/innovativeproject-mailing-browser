@@ -1,5 +1,4 @@
 // import { Thread } from '../db_create';
-
 var express = require('express');
 var router = express.Router();
 const MyMail = require('../db_create')
@@ -33,10 +32,11 @@ router.get('/threads', function(req, res, next) {
           [Op.eq] : ''
           }
       }
-  }).then((result)=>{
-      res.json(result);
-      res.end();
-  })
+
+    }).then((result)=>{
+      res.json(result); //to list all mails
+    res.end();
+    })
 });
 
 router.get('/threads/:id', function(req, res, next) {
@@ -49,12 +49,13 @@ router.get('/threads/:id', function(req, res, next) {
           where: {
             reference: result[0].messageId
           }
-        }).then((result2)=>{
-          res.json(result2)
+        }).then((result2)=>{          
+          res.json(result2);
           res.end();
-        })
-        
+        })        
       })
-  });
+  }) ;
+
+
 
 module.exports = router;

@@ -29,6 +29,14 @@ const imap = new Imap({
     imap.openBoxAsync("INBOX", false).then(function() {
       return imap.searchAsync(["UNSEEN"]);
     }).then(function(results) {
+      imap.setFlags(results, ['\\Seen'], function(err) {
+        if (!err) {
+            console.log("Marked as read");
+        } else {
+            console.log(JSON.stringify(err, null, 2));
+        }
+      });
+
       var f = imap.fetch(results, {
         bodies: [""]
       });
@@ -47,6 +55,7 @@ const imap = new Imap({
   }
 
   function processMessage(msg, seqno) {
+    
     msg.on("body" , function (stream) {
       parser(stream).then(mail => {
           var ref = "";
