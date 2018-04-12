@@ -7,7 +7,7 @@ var mails = require('./routes/mails');
 var users = require('./routes/users');
 var threads = require('./routes/threads');
 
-app.use("/singleThread",mails);
+app.use("/api",mails);
 app.use("/",threads);
 
 const Sequelize = require('sequelize');   //to connect with database

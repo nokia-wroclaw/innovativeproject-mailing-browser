@@ -27,7 +27,7 @@ const imap = new Imap({
 
   function execute() {
     imap.openBoxAsync("INBOX", false).then(function() {
-      return imap.searchAsync(["ALL"]);
+      return imap.searchAsync(["UNSEEN"]);
     }).then(function(results) {
       var f = imap.fetch(results, {
         bodies: [""]

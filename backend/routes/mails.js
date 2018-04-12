@@ -12,21 +12,34 @@ const Op = Sequelize.Op
 
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-    var id = req.params[0];
-    Mail.findAll({
+// router.get('/', function(req, res, next) {
+//     var id = req.params[0];
+//     Mail.findAll({
+//       where: {
+//         reference: Thread.messageId
+//       }
+//     }).then((result)=>{
+//       res.json(result); //to list all mails
+//     res.end();
+//     })
+
+
+// });
+
+router.get('/threads', function(req, res, next) {
+  Mail.findAll({
       where: {
-        reference: Thread.messageId
+          reference: {
+          [Op.eq] : ''
+          }
       }
-    }).then((result)=>{
-      res.json(result); //to list all mails
-    res.end();
-    })
-
-
+  }).then((result)=>{
+      res.json(result);
+      res.end();
+  })
 });
 
-router.get('/:id', function(req, res, next) {
+router.get('/threads/:id', function(req, res, next) {
       Mail.findAll({
         where: {
           id: req.params.id
