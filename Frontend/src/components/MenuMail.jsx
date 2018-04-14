@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
 import '../App.css';
-import {Grid, Menu, Segment, Image} from 'semantic-ui-react'
+import {Container, Item} from 'semantic-ui-react'
 import axios from 'axios';
 import _ from 'lodash';
 import {Link} from 'react-router-dom'
-//import myImage from '/../mailImage.png';
-
+import myImage from './mailImage.png';
+import Image from 'react-image-resizer';
 
 export default class MenuMail extends Component {
     constructor() {
@@ -49,11 +49,19 @@ export default class MenuMail extends Component {
     }
 
     getNotFullContent(num){
+        let textLength = 50;
         let string = "";
-        for (let x = 0; x<5 ; x++){
-            string += ((this.state.threads.length > 0 && this.state.threads[num].Text) ? this.state.threads[num].Text[x] : null)
+        let stringShortText = this.state.threads[num].Text ? this.state.threads[num].Text : "";
+
+        if(stringShortText.length < textLength){
+        string = stringShortText;
+            return string;
         }
-return string+"...";
+
+        for (let x = 0; x<textLength ; x++){
+            string += (this.state.threads[num].Text && this.state.threads[num].Text[x] ? this.state.threads[num].Text[x] : "")
+        }
+            return string+"...";
     }
 
     renderMails(num) {
@@ -71,25 +79,29 @@ return string+"...";
         const mails = _.map(this.state.threads, (mail, k) => {
            var kk = k+1;
             return (
-                <Grid.Row color='olive' key={k} name={k.toString()}>
-                    <Grid.Column width={3}>
-                        {/*<Image src = {myImage} />*/}
-                    </Grid.Column>
-                    <Grid.Column width={13}>
-                        <Link to={"/singleThread/" + mail.id } style={{color: 'black'}}>
+                <Item>
+                    <Image
+                        src = {myImage}
+                        width={150}
+                        height={150}
+                        //style={style.image}
+                    />
+                        <Link to={'/singleThread/' + mail.id } style={{color: 'black'}}>
                         <div>
                             {this.renderMails(k)}
                         </div>
                         </Link>
-                    </Grid.Column>
-                </Grid.Row>
-        )
+                </Item>
+            )
         });
 
         return (
-            <Grid celled>
+            <Container text>
+            <Item.Group divided>
                 {mails}
-            </Grid>
+            </Item.Group>
+            </Container>
+
         )
     }
 }
