@@ -44,7 +44,6 @@ const imap = new Imap({
         bodies: [""]
       });
       f.on("message", processMessage);
-      f.on("message", processThreads);
       f.once("error", function(err) {
         return Promise.reject(err);
     });
@@ -53,78 +52,72 @@ const imap = new Imap({
       imap.end();
     });
     }).catch(function (err) {
-   //   console.error("Error fetching messages: " + err.stack);
-   //   imap.end();
+      console.error("Error fetching messages: " + err.stack);
+      imap.end();
     });
 
   }
 
-  function processMessage(msg, seqno) {
+function isThread(mail) {
+      return !mail.references;
+}
 
-      msg.on("body", function (stream) {
-          parser(stream).then(mail => {
+function processMail(mail) {
 
-              var ref = "";
-              if (mail.references) {
-                  var refs = mail.references.split(",");
-                  ref = refs[0];
-              }
+    var [ref] = mail.references.split(",");
 
-                  Mail.create({
-                      Subject: mail.subject,
-                      From: mail.from.value[0].address,
-                      To: mail.to.value[0].address,
-                      Date: mail.date,
-                      Text: mail.text,
-                      TextAsHtml: mail.html,
-                      messageId: mail.messageId,
-                      reference: ref
-                  });
-
-          });
-      });
-  }
-
-function processThreads(msg, seqno) {
-    msg.on("body", function (stream) {
-        parser(stream).then(mail => {
-
-            if (!mail.references) {
-                Thread.create({
-                    messageId: mail.messageId,
-                    Date: mail.date
-                });
-            }
-        });
+    Mail.create({
+        Subject: mail.subject,
+        From: mail.from.value[0].address,
+        To: mail.to.value[0].address,
+        Date: mail.date,
+        Text: mail.text,
+        TextAsHtml: mail.html,
+        messageId: mail.messageId,
+        reference: ref
     });
 
-// .then(result =>
-//             handleResult(result)
-//     ).catch(err =>
-//             handleError(err)
- }
-function processThreadsUpdate() {
-    Thread.update(
-        { Date: Mail.Date },
+    Thread.update({
+            Date: mail.date
+        },
         {
             where: {
-                reference: {
-                    [Op.eq]: Thread.messageId
-                },
-                [Op.and]: {
-                    Date: {
-                        [Op.lt]: Mail.Date
-                    }
-                }
+                [Op.and]:
+                    [
+                        {messageId: ref},
+                        {Date: {[Op.lt]: mail.date}}
+
+                    ]
+            }
+        }
+    );
+}
+
+
+function processThreads(mail) {
+
+    Thread.create({
+        Subject: mail.subject,
+        From: mail.from.value[0].address,
+        To: mail.to.value[0].address,
+        Date: mail.date,
+        Text: mail.text,
+        TextAsHtml: mail.html,
+        messageId: mail.messageId,
+    });
+}
+
+function processMessage(msg, seqno) {
+
+    msg.on("body", function (stream) {
+        parser(stream).then(mail => {
+            if (isThread(mail)) {
+                processThreads(mail);
+            } else {
+                processMail(mail);
             }
         });
-    console.log("updateeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
+    });
 }
 
   module.exports=imap;
-//
-// update  public.threads
-// set "Date" = mails."Date" from public.mails
-// where mails.reference = threads."messageId" and
-// mails."Date" > threads."Date"
-//

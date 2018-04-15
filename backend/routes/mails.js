@@ -10,36 +10,17 @@ const Op = Sequelize.Op
 
 
 
-/* GET users listing. */
-// router.get('/', function(req, res, next) {
-//     var id = req.params[0];
-//     Mail.findAll({
-//       where: {
-//         reference: Thread.messageId
-//       }
-//     }).then((result)=>{
-//       res.json(result); //to list all mails
-//     res.end();
-//     })
-
-
-// });
-
 router.get('/threads', function(req, res, next) {
-  Mail.findAll({
-      where: {
-          reference: {
-          [Op.eq] : ''
-          }
-      },
-      order: [
-          ['Date', 'DESC'],
-      ]
+  return  Thread.findAll({
+        order: [
+            ['Date', 'DESC'],
+        ]
     }).then((result)=>{
-      res.json(result); //to list all mails
-    res.end();
-    })
+           res.json(result);
+           res.end();
+        })
 });
+
 
 router.get('/threads/:id', function(req, res, next) {
       Thread.findById(req.params.id).then((result)=>{
@@ -57,7 +38,6 @@ router.get('/threads/:id', function(req, res, next) {
         })        
       })
   }) ;
-
 
 
 module.exports = router;

@@ -33,10 +33,26 @@ const Mail = connection.define('mail', {
 }, {timestamps: false});
 
 const Thread = connection.define('thread',{
+    Subject: {
+        type: Sequelize.STRING
+    },
+    From: {
+        type: Sequelize.STRING
+    },
+    To: {
+        type: Sequelize.STRING
+    },
+    Date: {
+        type: Sequelize.DATE
+    },
+    Text: {
+        type: Sequelize.TEXT
+    },
+    TextAsHtml: {
+        type: Sequelize.TEXT
+    },
     messageId: {
         type: Sequelize.STRING
-    }, Date: {
-        type: Sequelize.DATE
     }
 }, {timestamps: false});
 
