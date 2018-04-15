@@ -32,6 +32,17 @@ const Mail = connection.define('mail', {
     }
 }, {timestamps: false});
 
+const Thread = connection.define('thread',{
+    messageId: {
+        type: Sequelize.STRING
+    }, Date: {
+        type: Sequelize.DATE
+    }
+}, {timestamps: false});
+
+
 Mail.sync().then(() => {});
+Thread.sync().then(()=>{});
 
 module.exports.Mail = Mail;
+module.exports.Thread = Thread;
