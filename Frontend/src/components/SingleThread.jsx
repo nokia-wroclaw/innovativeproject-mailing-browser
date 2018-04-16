@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import '../App.css';
-import { Container, Header } from 'semantic-ui-react'
+import { Container, Header, Reveal } from 'semantic-ui-react'
 import {Grid} from 'semantic-ui-react'
 import axios from 'axios';
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
@@ -11,12 +11,12 @@ export default class SingleThread extends Component {
     constructor() {
         super();
         this.state = {
-            mails: null
+            mails: null,
+            visible: [1,1,1,1]
         };
     }
 
     getOneMail = (index) => {
-       // return axios.get("/db.json")
         var url = "/api/threads/";
 
         return axios.get(url + index)
@@ -29,6 +29,22 @@ export default class SingleThread extends Component {
         });
     }
 
+    changeVisible = key => {
+        let tab = this.state.visible;
+        console.log("klucz");
+        console.log(key);
+        if(this.state.visible[key] === 1) {
+           tab[key] = 0;
+        }
+        else {
+            tab[key] = 1;
+        }
+
+        this.setState({
+            visible: tab
+        })
+        // this.render();
+    };
 
     renderMailNameAndContent() {
         const html = _.map(this.state.mails, (mail,k) => {
@@ -36,7 +52,21 @@ export default class SingleThread extends Component {
             console.log(mail);
             console.log(k);
 
-            return( mail.TextAsHtml)
+            if(this.state.visible[k] === 0){
+                return (
+                    <div key={k} style={{marginLeft: `${100 * k}px`}}>
+                        <button key={k} onClick={() => this.changeVisible(k)}>Pokaz/ukryj</button>
+                    </div>
+                )
+            }
+            else {
+                return (
+                    <div key={k} style={{marginLeft: `${100 * k}px`}}>
+                        <button key={k} onClick={() => this.changeVisible(k)}>Pokaz/ukryj</button>
+                        {ReactHtmlParser(mail.TextAsHtml)}
+                    </div>
+                )
+            }
         });
 
         console.log("reszta");
@@ -45,16 +75,18 @@ export default class SingleThread extends Component {
 
         return (
             <div>
-                {ReactHtmlParser(html)}
+                {html}
             </div>
         );
     }
 
     render() {
         return (
-            <div className="container-fluid">
+
+            <div className='hidden'>
 
                 <Container text>
+
                     <Header as ='h2'>{this.state.mails ? this.state.mails[0].Subject : null}</Header>
                     <Header as ='h5'>{this.state.mails ? this.state.mails[0].Date : null}</Header>
                     {this.state.mails ? this.renderMailNameAndContent() : null}
