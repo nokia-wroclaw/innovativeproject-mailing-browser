@@ -6,6 +6,8 @@ import axios from 'axios';
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 import { Item } from 'semantic-ui-react'
 import _ from 'lodash';
+import { Button } from 'semantic-ui-react'
+
 
 export default class SingleThread extends Component {
     constructor() {
@@ -53,26 +55,41 @@ export default class SingleThread extends Component {
             //console.log("mail,k");
             //console.log(mail);
             //console.log(k);
-let str = mail.TextAsHtml.split("<hr style=\"display:inline-block;width:98%\" tabindex=\"-1\">");
-            console.log("string");
-            console.log(str);
-
-            if(this.state.visible[k] === 0){
-                return (
-                    <div key={k} style={{marginLeft: `${100 * k}px`}}>
-                        {ReactHtmlParser(str[0])}
-                        <button key={k} onClick={() => this.changeVisible(k)}>Pokaz/ukryj</button>
-                    </div>
+            if(k===0){
+                let str = mail.TextAsHtml.split("<td style=\"width: 55px; padding-top: 18px;\">");
+                return(
+                <div key={k} style={{marginLeft: `${100 * k}px`}}>
+                    {ReactHtmlParser(str[0])}
+                </div>
                 )
             }
-            else {
-                return (
-                    <div key={k} style={{marginLeft: `${100 * k}px`}}>
-                        {ReactHtmlParser(str[0])}
-                        <button key={k} onClick={() => this.changeVisible(k)}>Pokaz/ukryj</button>
-                        {ReactHtmlParser(str[1])}
-                    </div>
-                )
+else {
+
+                let str = mail.TextAsHtml.split("<hr style=\"display:inline-block;width:98%\" tabindex=\"-1\">");
+                let str2 = str[1].split("<td style=\"width:55px; padding-top:18px\">");
+                console.log("string1");
+                console.log(str);
+                str[1] = str2[0];
+                console.log("string22");
+                console.log(str2);
+
+                if (this.state.visible[k] === 0) {
+                    return (
+                        <div key={k} style={{marginLeft: `${100 * k}px`}}>
+                            {ReactHtmlParser(str[0])}
+                            <Button content='Primary' color='grey' key={k} size='mini' onClick={() => this.changeVisible(k)}>Rozwiń</Button>
+                        </div>
+                    )
+                }
+                else {
+                    return (
+                        <div key={k} style={{marginLeft: `${100 * k}px`}}>
+                            {ReactHtmlParser(str[0])}
+                            <Button content='Primary' color='grey' key={k} size='mini' onClick={() => this.changeVisible(k)}>Schowaj</Button>
+                            {ReactHtmlParser(str[1])}
+                        </div>
+                    )
+                }
             }
         });
 
