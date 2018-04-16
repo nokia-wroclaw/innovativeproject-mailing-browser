@@ -39,22 +39,28 @@ export default class SingleThread extends Component {
         else {
             tab[key] = 1;
         }
-
         this.setState({
             visible: tab
         })
-        // this.render();
+
+        //let s="sfsdf,ddddd";
+       // let s2 = s.split(',');
+       // console.log(s + '____' + s2[1]);
     };
 
     renderMailNameAndContent() {
         const html = _.map(this.state.mails, (mail,k) => {
-            console.log("mail,k");
-            console.log(mail);
-            console.log(k);
+            //console.log("mail,k");
+            //console.log(mail);
+            //console.log(k);
+let str = mail.TextAsHtml.split("<hr style=\"display:inline-block;width:98%\" tabindex=\"-1\">");
+            console.log("string");
+            console.log(str);
 
             if(this.state.visible[k] === 0){
                 return (
                     <div key={k} style={{marginLeft: `${100 * k}px`}}>
+                        {ReactHtmlParser(str[0])}
                         <button key={k} onClick={() => this.changeVisible(k)}>Pokaz/ukryj</button>
                     </div>
                 )
@@ -62,16 +68,17 @@ export default class SingleThread extends Component {
             else {
                 return (
                     <div key={k} style={{marginLeft: `${100 * k}px`}}>
+                        {ReactHtmlParser(str[0])}
                         <button key={k} onClick={() => this.changeVisible(k)}>Pokaz/ukryj</button>
-                        {ReactHtmlParser(mail.TextAsHtml)}
+                        {ReactHtmlParser(str[1])}
                     </div>
                 )
             }
         });
 
-        console.log("reszta");
-        console.log(this.state.mails);
-        console.log(html);
+        //console.log("reszta");
+        //console.log(this.state.mails);
+        //console.log(html);
 
         return (
             <div>
