@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import '../App.css';
-import MenuExampleSecondaryPointing from './MenuPointing';
+import MenuNavBar from './MenuNavBar';
 
 
 export class Home extends Component {
@@ -12,7 +12,7 @@ export class Home extends Component {
         return (
             <div>
                 <div>
-                    <MenuExampleSecondaryPointing/>
+                    <MenuNavBar/>
                 </div>
                 <div>
                     {this.props.children}
