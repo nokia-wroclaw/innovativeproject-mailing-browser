@@ -1,6 +1,9 @@
 const MyMail = require('./db_create')
 var Mail = MyMail.Mail;
-
+const MyThread = require('./db_create')
+var Thread = MyThread.Thread;
+const Sequelize = require('sequelize')
+const Op = Sequelize.Op
 
 console.log(Mail);
 
@@ -52,31 +55,70 @@ const imap = new Imap({
       console.error("Error fetching messages: " + err.stack);
       imap.end();
     });
+
   }
 
-  function processMessage(msg, seqno) {
-    
-    msg.on("body" , function (stream) {
-      parser(stream).then(mail => {
-          var ref = "";
-          if(mail.references)
-          {
-            var refs = mail.references.split(",");
-            ref = refs[0];
-          }
-          Mail.create({
-            Subject: mail.subject,
-            From: mail.from.value[0].address,
-            To: mail.to.value[0].address,
-            Date: mail.date,
-            Text: mail.text,
-            TextAsHtml: mail.html,
-            messageId: mail.messageId,
-            reference: ref
-          });
+function isThread(mail) {
+      return !mail.references;
+}
 
-      });
+function processMail(mail) {
+
+    var [ref] = String(mail.references).split(",");
+
+    Mail.create({
+        Subject: mail.subject,
+        From: mail.from.value[0].address,
+        To: mail.to.value[0].address,
+        Date: mail.date,
+        Text: mail.text,
+        TextAsHtml: mail.html,
+        messageId: mail.messageId,
+        reference: ref
     });
-  }
-  
+
+    Thread.update({
+            threadDate: mail.date
+        },
+        {
+            where: {
+                [Op.and]:
+                    [
+                        {messageId: ref},
+                        {Date: {[Op.lt]: mail.date}}
+
+                    ]
+            }
+        }
+    );
+}
+
+
+function processThreads(mail) {
+
+    Thread.create({
+        Subject: mail.subject,
+        From: mail.from.value[0].address,
+        To: mail.to.value[0].address,
+        Date: mail.date,
+        threadDate: mail.date,
+        Text: mail.text,
+        TextAsHtml: mail.html,
+        messageId: mail.messageId
+    });
+}
+
+function processMessage(msg, seqno) {
+
+    msg.on("body", function (stream) {
+        parser(stream).then(mail => {
+            if(isThread(mail)) {
+                processThreads(mail);
+            } else {
+                processMail(mail);
+            }
+        });
+    });
+}
+
   module.exports=imap;

@@ -8,6 +8,7 @@ const MyMail = require('../db_create')
 var Mail = MyMail.Mail;
 
 /* GET users listing. */
+
 router.get('/', function(req, res, next) {
     Mail.findAll({
         where: {
