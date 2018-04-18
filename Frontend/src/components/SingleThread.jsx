@@ -56,27 +56,32 @@ export default class SingleThread extends Component {
             //console.log(mail);
             //console.log(k);
             if(k===0){
-                let str = mail.TextAsHtml.split("<td style=\"width: 55px; padding-top: 18px;\">");
+                let fullMainMailAsHtml = mail.TextAsHtml.split("<td style=\"width: 55px; padding-top: 18px;\">");
+                let MainMailNoAvast = fullMainMailAsHtml[0];
+
                 return(
                 <div key={k} style={{marginLeft: `${100 * k}px`}}>
-                    {ReactHtmlParser(str[0])}
+                    {ReactHtmlParser(MainMailNoAvast)}
                 </div>
                 )
             }
 else {
+                let fullMailAsHtml = mail.TextAsHtml;
 
-                let str = mail.TextAsHtml.split("<hr style=\"display:inline-block;width:98%\" tabindex=\"-1\">");
-                let str2 = str[1].split("<td style=\"width:55px; padding-top:18px\">");
-                console.log("string1");
-                console.log(str);
-                str[1] = str2[0];
-                console.log("string22");
-                console.log(str2);
+                var indexStartAvast = fullMailAsHtml.indexOf("<tr>");
+                var indexEndAvast = fullMailAsHtml.indexOf("</tr>");
+
+                let fullMailNoAvast = fullMailAsHtml.slice(0,indexStartAvast-1) + fullMailAsHtml.substring(indexEndAvast+5);
+
+                let str = fullMailNoAvast. split("<hr style=\"display:inline-block;width:98%\" tabindex=\"-1\">");
+                let mailBody = str[0];
+                let mailQuotes = str[1];
+
 
                 if (this.state.visible[k] === 0) {
                     return (
                         <div key={k} style={{marginLeft: `${100 * k}px`}}>
-                            {ReactHtmlParser(str[0])}
+                            {ReactHtmlParser(mailBody)}
                             <Button content='Primary' color='grey' key={k} size='mini' onClick={() => this.changeVisible(k)}>Rozwiń</Button>
                         </div>
                     )
@@ -84,9 +89,9 @@ else {
                 else {
                     return (
                         <div key={k} style={{marginLeft: `${100 * k}px`}}>
-                            {ReactHtmlParser(str[0])}
+                            {ReactHtmlParser(mailBody)}
                             <Button content='Primary' color='grey' key={k} size='mini' onClick={() => this.changeVisible(k)}>Schowaj</Button>
-                            {ReactHtmlParser(str[1])}
+                            {ReactHtmlParser(mailQuotes)}
                         </div>
                     )
                 }
