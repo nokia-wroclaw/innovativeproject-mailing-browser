@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import '../App.css';
-import { Container, Header, Reveal } from 'semantic-ui-react'
-import {Grid} from 'semantic-ui-react'
+import { Container, Header, Reveal } from 'semantic-ui-react';
+import {Segment} from 'semantic-ui-react';
 import axios from 'axios';
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 import { Item } from 'semantic-ui-react'
 import _ from 'lodash';
-import { Button } from 'semantic-ui-react'
+import { Button } from 'semantic-ui-react';
+import './SingleThread.css';
 
 
 export default class SingleThread extends Component {
@@ -61,7 +62,10 @@ export default class SingleThread extends Component {
 
                 return(
                 <div key={k} style={{marginLeft: `${100 * k}px`}}>
-                    {ReactHtmlParser(MainMailNoAvast)}
+                    <Segment padded>
+                        {ReactHtmlParser(MainMailNoAvast)}
+                    </Segment>
+                    <br/>
                 </div>
                 )
             }
@@ -81,7 +85,10 @@ else {
                 if (this.state.visible[k] === 0) {
                     return (
                         <div key={k} style={{marginLeft: `${100 * k}px`}}>
-                            {ReactHtmlParser(mailBody)}
+                            <Segment padded>
+                                {ReactHtmlParser(mailBody)}
+                            </Segment>
+
                             <Button content='Primary' color='grey' key={k} size='mini' onClick={() => this.changeVisible(k)}>Rozwiń</Button>
                         </div>
                     )
@@ -89,9 +96,16 @@ else {
                 else {
                     return (
                         <div key={k} style={{marginLeft: `${100 * k}px`}}>
-                            {ReactHtmlParser(mailBody)}
+                            <Segment padded>
+                                {ReactHtmlParser(mailBody)}
+                            </Segment>
                             <Button content='Primary' color='grey' key={k} size='mini' onClick={() => this.changeVisible(k)}>Schowaj</Button>
-                            {ReactHtmlParser(mailQuotes)}
+                            <div id={"quotes"} key={k} style={{marginLeft: `${30 * k}px`}}>
+                                <Segment padded>
+                                    {mail.From} napisał:
+                                {ReactHtmlParser(mailQuotes)}
+                                </Segment>
+                            </div>
                         </div>
                     )
                 }
