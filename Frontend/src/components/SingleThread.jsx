@@ -129,9 +129,14 @@ else {
             <div className='hidden'>
 
                 <Container text>
-
+                    <Segment color='yellow'>
                     <Header as ='h2'>{this.state.mails ? this.state.mails[0].Subject : null}</Header>
-                    <Header as ='h5'>{this.state.mails ? this.state.mails[0].Date : null}</Header>
+                    </Segment>
+                    <Segment tertiary>
+                    <Header as ='h5'> Wysłane: {this.state.mails ? this.state.mails[0].Date : null}</Header>
+                    Od: {this.state.mails ? this.state.mails[0].From : null} <br/>
+                    Do: {this.state.mails ? this.state.mails[0].To : null}
+                    </Segment>
                     {this.state.mails ? this.renderMailNameAndContent() : null}
                 </Container>
             </div>

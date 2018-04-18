@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
 import '../App.css';
-import {Container, Item} from 'semantic-ui-react'
+import {Container, Item, Segment} from 'semantic-ui-react'
 import axios from 'axios';
 import _ from 'lodash';
 import {Link} from 'react-router-dom'
 import myImage from './mailImage.png';
 import Image from 'react-image-resizer';
+import './MenuMail.css';
 
 export default class MenuMail extends Component {
     constructor() {
@@ -97,9 +98,11 @@ export default class MenuMail extends Component {
 
         return (
             <Container text>
+                <Segment padded='very' tertiary>
             <Item.Group divided>
                 {mails}
             </Item.Group>
+            </Segment>
             </Container>
 
         )
