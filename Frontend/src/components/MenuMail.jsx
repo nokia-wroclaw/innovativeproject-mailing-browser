@@ -7,7 +7,6 @@ import {Link} from 'react-router-dom'
 import myImage from './mailImage.png';
 import Image from 'react-image-resizer';
 import './MenuMail.css';
-
 export default class MenuMail extends Component {
     constructor() {
         super();
@@ -68,7 +67,7 @@ export default class MenuMail extends Component {
     renderMails(num) {
         //console.log('rendermails');
        // console.log(this.state.threads);
-        return <div>
+        return <div >
             <h2>{this.state.threads ? this.state.threads[num].Subject : null}</h2>
              <h4>{this.state.threads[num].From} </h4>
             <p>{this.getNotFullContent(num)}</p>
