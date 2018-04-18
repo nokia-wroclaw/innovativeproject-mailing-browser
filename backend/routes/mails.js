@@ -11,14 +11,14 @@ const Op = Sequelize.Op
 
 
 router.get('/threads', function(req, res, next) {
-  return  Thread.findAll({
-        order: [
-            ['Date', 'DESC'],
-        ]
-    }).then((result)=>{
-           res.json(result);
-           res.end();
-        })
+    Thread.findAll({
+    order:[
+        ['threadDate', 'DESC'],
+    ]
+}).then(result=>{
+        res.json(result);
+        res.end();
+    });
 });
 
 

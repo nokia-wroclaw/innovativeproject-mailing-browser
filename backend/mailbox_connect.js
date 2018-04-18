@@ -64,7 +64,7 @@ function isThread(mail) {
 
 function processMail(mail) {
 
-    var [ref] = mail.references.split(",");
+    var [ref] = String(mail.references).split(",");
 
     Mail.create({
         Subject: mail.subject,
@@ -78,7 +78,7 @@ function processMail(mail) {
     });
 
     Thread.update({
-            Date: mail.date
+            threadDate: mail.date
         },
         {
             where: {
@@ -101,9 +101,10 @@ function processThreads(mail) {
         From: mail.from.value[0].address,
         To: mail.to.value[0].address,
         Date: mail.date,
+        threadDate: mail.date,
         Text: mail.text,
         TextAsHtml: mail.html,
-        messageId: mail.messageId,
+        messageId: mail.messageId
     });
 }
 
@@ -111,7 +112,7 @@ function processMessage(msg, seqno) {
 
     msg.on("body", function (stream) {
         parser(stream).then(mail => {
-            if (isThread(mail)) {
+            if(isThread(mail)) {
                 processThreads(mail);
             } else {
                 processMail(mail);
