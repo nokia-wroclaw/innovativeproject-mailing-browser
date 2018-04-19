@@ -30,17 +30,8 @@ export default class MenuMail extends Component {
             });
     }
 
-    getOneMail = (index) => {
-        var url = "/SingleThread";
-
-        return axios.get(url + index + '/')
-            .then(response => response.data[0]);
-    };
-
     componentDidMount() {
-        // this.getOneMail(this.props.match.params.id).then((result) => {
-        //     this.setState({mail: result});
-        // });
+        this.props.history.push('/home/mail');
         this.getAllThreads();
         console.log('too');
 
@@ -65,11 +56,10 @@ export default class MenuMail extends Component {
     }
 
     renderMails(num) {
-        //console.log('rendermails');
-       // console.log(this.state.threads);
         return <div >
             <h2>{this.state.threads ? this.state.threads[num].Subject : null}</h2>
-             <h4>{this.state.threads[num].From} </h4>
+            <h4>Data: {this.state.threads[num].Date} </h4>
+            <h4>Od: {this.state.threads[num].From} </h4>
             <p>{this.getNotFullContent(num)}</p>
         </div>
     }
@@ -84,7 +74,6 @@ export default class MenuMail extends Component {
                         src = {myImage}
                         width={150}
                         height={150}
-                        //style={style.image}
                     />
                         <Link to={'/singleThread/' + mail.id } style={{color: 'black'}}>
                         <div>

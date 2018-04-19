@@ -15,8 +15,7 @@ class App extends React.Component{
                     <Home>
                         <Switch>
                             <Route exact path="/" component={MenuMail}/>
-                            <Route exact path="/mail" component={MenuMail} />
-                            <Route exact path="/mail/:id" component={MenuMail} />
+                            <Route exact path="/home/mail" component={MenuMail} />
                             <Route exact path="/singlethread/:id" component={SingleThread} />
                         </Switch>
                     </Home>
