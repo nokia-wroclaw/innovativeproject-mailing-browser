@@ -14,7 +14,7 @@ export default class MenuNavBar extends Component {
     return (
       <div>
         <Menu pointing secondary>
-            <Menu.Item name='home' active={activeItem === 'home'} onClick={this.handleItemClick}> <Link to={"/mail/0"}> Home </Link> </Menu.Item>
+            <Menu.Item name='home' active={activeItem === 'home'} onClick={this.handleItemClick}> <Link to={"/mail/0"}> Mailing  </Link> </Menu.Item>
           <Menu.Menu position='right'>
               <Input
                   icon={{ name: 'search', circular: true, link: true }}

@@ -97,8 +97,10 @@ export default class SingleThread extends Component {
                             <Button content='Primary' color='grey' key={k} size='mini'
                                     onClick={() => this.changeVisible(k)}>Schowaj</Button>
                             <div key={k} style={{marginLeft: `${30 * k}px`}}>
-                                <Segment padded >
+                                <Segment padded color={"yellow"} >
+                                    <div>
                                     {ReactHtmlParser(mailQuotes)}
+                                    </div>
                                 </Segment>
                             </div>
                         </div>

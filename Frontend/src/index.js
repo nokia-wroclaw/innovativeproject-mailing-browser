@@ -6,6 +6,7 @@ import {BrowserRouter as Router,Route, Switch } from 'react-router-dom';
 import MailList from "./components/SingleThread";
 import MenuMail from "./components/MenuMail";
 import SingleThread from "./components/SingleThread";
+import 'semantic-ui-css/semantic.min.css';
 
 
 class App extends React.Component{
