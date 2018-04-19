@@ -7,6 +7,9 @@ import {Link} from 'react-router-dom'
 import myImage from './mailImage.png';
 import Image from 'react-image-resizer';
 import './MenuMail.css';
+import { Menu } from 'semantic-ui-react'
+import { Input } from 'semantic-ui-react'
+
 export default class MenuMail extends Component {
     constructor() {
         super();
@@ -39,43 +42,12 @@ export default class MenuMail extends Component {
 
     }
 
-    getNotFullContent(num){
-        let textLength = 50;
-        let string = "";
-        let stringShortText = num.Text.substring(0,50);
+    getNotFullContent(mail){
+        let stringShortText = mail.Text.substring(0,50);
 
-        // if(stringShortText.length < textLength){
-        // string = stringShortText;
-        //     return string;
-        // }
-        //
-        // for (let x = 0; x<textLength ; x++){
-        //     string += (this.state.threads[num].Text && this.state.threads[num].Text[x] ? this.state.threads[num].Text[x] : "")
-        // }
-
-        if(stringShortText!==num.Text)
+        if(stringShortText!==mail.Text)
             return stringShortText + '...';
         return stringShortText;
-    }
-
-    renderMails(num) {
-        return (
-            <Item>
-                <Item.Image
-                    src = {myImage}
-                    width={150}
-                    height={150}
-                />
-            <Item.Header>{this.state.threads ? this.state.threads[num].Subject : null}</Item.Header>
-            <Item.Meta>
-                Data: {this.state.threads[num].Date}
-            </Item.Meta>
-            <Item.Meta>
-                Od: {this.state.threads[num].From}
-            </Item.Meta>
-            <Item.Description>{this.getNotFullContent(num)}</Item.Description>
-        </Item>
-        )
     }
 
     renderItem(mail,index){
@@ -86,9 +58,9 @@ export default class MenuMail extends Component {
                 <Item.Content>
                     <Item.Header>{mail.Subject}</Item.Header>
                     <Item.Meta>
-                        <span className='price'>{mail.Date}</span>
+                        <span className='price'>Data: {mail.Date}</span>
                         <br/>
-                        <span className='stay'>{mail.From}</span>
+                        <span className='stay'> Od: {mail.From}</span>
                     </Item.Meta>
                     <Item.Description>{this.getNotFullContent(mail)}</Item.Description>
                 </Item.Content>
@@ -104,10 +76,10 @@ export default class MenuMail extends Component {
             return    this.renderItem(mail,k)
         });
 
-        const paragraph = <ImageComponent src='/assets/images/wireframe/short-paragraph.png' />
         return (
             <Container text>
-                <Segment padded='very' tertiary>
+                <Segment tertiary>
+                    <Input fluid icon={{ name: 'search', circular: true, link: true }} placeholder='Search...' />
             <Item.Group divided>
                 {mails}
             </Item.Group>
