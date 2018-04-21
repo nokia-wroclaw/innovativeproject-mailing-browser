@@ -1,4 +1,3 @@
-// import { Thread } from '../db_create';
 var express = require('express');
 var router = express.Router();
 const MyMail = require('../db_create')
@@ -9,35 +8,34 @@ const Sequelize = require('sequelize')
 const Op = Sequelize.Op
 
 
-
-router.get('/threads', function(req, res, next) {
+router.get('/threads', function (req, res, next) {
     Thread.findAll({
-    order:[
-        ['threadDate', 'DESC'],
-    ]
-}).then(result=>{
+        order: [
+            ['threadDate', 'DESC'],
+        ]
+    }).then(result => {
         res.json(result);
         res.end();
     });
 });
 
 
-router.get('/threads/:id', function(req, res, next) {
-      Thread.findById(req.params.id).then((result)=>{
+router.get('/threads/:id', function (req, res, next) {
+    Thread.findById(req.params.id).then((result) => {
         return Mail.findAll({
-          where: {
-            reference: result.messageId
-          },
+            where: {
+                reference: result.messageId
+            },
             order: [
                 ['Date', 'ASC'],
             ]
-        }).then((result2)=>{
-          console.log(result, " cccccccccccccccccccccccccccccccccccccccccccasds",  result2)
-          res.json([result,...result2]);
-          res.end();
-        })        
-      })
-  }) ;
+        }).then((result2) => {
+            console.log(result, " cccccccccccccccccccccccccccccccccccccccccccasds", result2)
+            res.json([result, ...result2]);
+            res.end();
+        })
+    })
+});
 
 
 module.exports = router;
