@@ -86,24 +86,27 @@ function processMail(mail) {
             //   return record.setThread(result);
             //   });
         });
-    });
 
     Thread.update({
-            threadDate: mail.date
-        },
+            threadDate: mail.date},
         {
             where: {
                 [Op.and]:
                     [
                         {messageId: ref},
                         {Date: {[Op.lt]: mail.date}}
-
                     ]
             }
         }
     );
+        Thread.update({
+            NumberOfReplies: Sequelize.literal('"NumberOfReplies" + 1')},
+            {
+                where: {messageId: ref}
+            }
+        );
 
-
+    });
 }
 
 
@@ -117,7 +120,8 @@ function processThreads(mail) {
         threadDate: mail.date,
         Text: mail.text,
         TextAsHtml: mail.html,
-        messageId: mail.messageId
+        messageId: mail.messageId,
+        NumberOfReplies: 0
     });
 }
 

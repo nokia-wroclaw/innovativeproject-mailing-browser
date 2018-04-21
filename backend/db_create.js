@@ -29,7 +29,7 @@ const Mail = connection.define('mail', {
     },
     threadId: {
         type: Sequelize.INTEGER
-    },
+    }
 }, {timestamps: false});
 
 const Thread = connection.define('thread',{
@@ -56,6 +56,9 @@ const Thread = connection.define('thread',{
     },
     messageId: {
         type: Sequelize.STRING
+    },
+    NumberOfReplies: {
+        type: Sequelize.INTEGER
     }
 }, {timestamps: false});
 //
