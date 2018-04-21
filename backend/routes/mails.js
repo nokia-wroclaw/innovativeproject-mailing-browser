@@ -24,18 +24,24 @@ router.get('/threads', function(req, res, next) {
 
 router.get('/threads/:id', function(req, res, next) {
       Thread.findById(req.params.id).then((result)=>{
-        return Mail.findAll({
-          where: {
-            reference: result.messageId
-          },
-            order: [
-                ['Date', 'ASC'],
-            ]
-        }).then((result2)=>{
-          console.log(result, " cccccccccccccccccccccccccccccccccccccccccccasds",  result2)
-          res.json([result,...result2]);
-          res.end();
-        })        
+        if(result == null) {
+            res.sendStatus(404);
+            res.end();
+        }
+        else {
+            return Mail.findAll({
+            where: {
+                reference: result.messageId
+             },
+                order: [
+                    ['Date', 'ASC'],
+                ]
+            }).then((result2)=>{            
+                console.log(result, " cccccccccccccccccccccccccccccccccccccccccccasds",  result2)
+                res.json([result,...result2]);
+                res.end();        
+            })  
+        }      
       })
   }) ;
 
