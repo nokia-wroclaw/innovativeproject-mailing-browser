@@ -17,64 +17,75 @@ const imap = new Imap({
     host: 'imap-mail.outlook.com',
     port: 993,
     tls: true
-  });
+});
 
 
-  Promise.promisifyAll(imap);
+Promise.promisifyAll(imap);
 
-  imap.once("ready", execute);
-  imap.once("error", function(err) {
+imap.once("ready", execute);
+imap.once("error", function (err) {
     console.error("Connection error:" + err.stack);
-  });
-  imap.connect();
+});
+imap.connect();
 
-  function execute() {
-    imap.openBoxAsync("INBOX", false).then(function() {
-      return imap.searchAsync(["UNSEEN"]);
-    }).then(function(results) {
-      imap.setFlags(results, ['\\Seen'], function(err) {
-        if (!err) {
-            console.log("Marked as read");
-        } else {
-            console.log(JSON.stringify(err, null, 2));
-        }
-      });
+function execute() {
+    imap.openBoxAsync("INBOX", false).then(function () {
+        return imap.searchAsync(["UNSEEN"]);
+    }).then(function (results) {
+        imap.setFlags(results, ['\\Seen'], function (err) {
+            if (!err) {
+                console.log("Marked as read");
+            } else {
+                console.log(JSON.stringify(err, null, 2));
+            }
+        });
 
-      var f = imap.fetch(results, {
-        bodies: [""]
-      });
-      f.on("message", processMessage);
-      f.once("error", function(err) {
-        return Promise.reject(err);
-    });
-    f.once("end", function() {
-      console.info("Done fetching all unseen messages.");
-      imap.end();
-    });
+        var f = imap.fetch(results, {
+            bodies: [""]
+        });
+        f.on("message", processMessage);
+        f.once("error", function (err) {
+            return Promise.reject(err);
+        });
+        f.once("end", function () {
+            console.info("Done fetching all unseen messages.");
+            imap.end();
+        });
     }).catch(function (err) {
-      console.error("Error fetching messages: " + err.stack);
-      imap.end();
+        console.error("Error fetching messages: " + err.stack);
+        imap.end();
     });
 
-  }
+}
 
 function isThread(mail) {
-      return !mail.references;
+    return !mail.references;
 }
 
 function processMail(mail) {
 
     var [ref] = String(mail.references).split(",");
 
-    Mail.create({
-        Subject: mail.subject,
-        From: mail.from.value[0].address,
-        To: mail.to.value[0].address,
-        Date: mail.date,
-        Text: mail.text,
-        TextAsHtml: mail.html,
-        messageId: mail.messageId,
-        reference: ref
+    Thread.find({
+        where: {
+            messageId: ref
+        }
+    }).then((result) => {
+        Mail.create({
+            Subject: mail.subject,
+            From: mail.from.value[0].address,
+            To: mail.to.value[0].address,
+            Date: mail.date,
+            Text: mail.text,
+            TextAsHtml: mail.html,
+            messageId: mail.messageId,
+            reference: ref,
+            threadId: result.id
+
+            //  }).then(function(record){
+            //   return record.setThread(result);
+            //   });
+        });
     });
 
     Thread.update({
@@ -91,6 +102,8 @@ function processMail(mail) {
             }
         }
     );
+
+
 }
 
 
@@ -112,7 +125,7 @@ function processMessage(msg, seqno) {
 
     msg.on("body", function (stream) {
         parser(stream).then(mail => {
-            if(isThread(mail)) {
+            if (isThread(mail)) {
                 processThreads(mail);
             } else {
                 processMail(mail);
@@ -121,4 +134,4 @@ function processMessage(msg, seqno) {
     });
 }
 
-  module.exports=imap;
+module.exports = imap;
