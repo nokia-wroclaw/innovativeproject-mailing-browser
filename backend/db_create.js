@@ -1,9 +1,6 @@
 const Sequelize = require('sequelize');
 const connection = require('./db_connect'); //handle for specific database
 
-var MyMails = require('./mailbox_connect');
-var mails = MyMails.mails;
-
 
 const Mail = connection.define('mail', {
     Subject: {
@@ -31,7 +28,7 @@ const Mail = connection.define('mail', {
         type: Sequelize.STRING
     },
     threadId: {
-        type: Sequelize.STRING
+        type: Sequelize.INTEGER
     }
 }, {timestamps: false});
 
@@ -59,13 +56,26 @@ const Thread = connection.define('thread',{
     },
     messageId: {
         type: Sequelize.STRING
+    },
+    NumberOfReplies: {
+        type: Sequelize.INTEGER
     }
 }, {timestamps: false});
+//
+
+//
+// Thread.hasMany(Mail,{foreignKey: 'threadId'});
+// Mail.belongsTo(Thread,{foreignKey: 'threadId'});
+
+     Mail.sync().then(() => {});
+     Thread.sync().then(()=>{});
 
 
-Mail.sync().then(() => {});
-Thread.sync().then(()=>{});
+//
 
+
+
+//Mail.belongsTo(Thread, {foreignKey: 'threadId'});
 
 module.exports.Mail = Mail;
 module.exports.Thread = Thread;

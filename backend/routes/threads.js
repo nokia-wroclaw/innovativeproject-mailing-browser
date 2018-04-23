@@ -22,4 +22,27 @@ router.get('/', function(req, res, next) {
     })
 });
 
+router.get('/threads/HotThreads', function (req, res, next) {
+    Thread.findAll({
+        order: [
+            ['NumberOfReplies', 'DESC'],
+        ]
+    }).then(result => {
+        res.json(result);
+        res.end();
+    });
+});
+
+
+router.get('/threads/sort=ASC', function (req, res, next) {
+    Thread.findAll({
+        order: [
+            ['threadDate', 'ASC'],
+        ]
+    }).then(result => {
+        res.json(result);
+        res.end();
+    });
+});
+
 module.exports = router;
