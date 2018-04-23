@@ -35,7 +35,7 @@ export default class MenuMail extends Component {
 
     getSearchThreads = (e, {value}) => {
         if(value !== '') {
-            axios.get("/search/thread/" + value)
+            axios.get("/search/" + value)
                 .then((response) => {
                     console.log(response);
                     this.setState({
@@ -62,9 +62,10 @@ export default class MenuMail extends Component {
     }
 
     getNotFullContent(mail) {
-        let stringShortText = mail.Text.substring(0, 50);
+        let fullMailContent = mail.Text.split("[https://ipmcdn.avast.com/images/icons/icon-envelope-tick-round-orange-animated-no-repeat-v1.gif]");
+        let stringShortText = fullMailContent[0].substring(0, 30);
 
-        if (stringShortText !== mail.Text)
+        if (stringShortText !== fullMailContent[0])
             return stringShortText + '...';
         return stringShortText;
     }
@@ -94,13 +95,13 @@ export default class MenuMail extends Component {
     render() {
 
         const mails = _.map(this.state.threads, (mail, k) => {
-            return this.renderItem(mail, k)
+            return this.renderItem(mail, k);
         });
 
         return (
             <div>
                 <Container text>
-                    <Segment inverted color={'blue'}>
+                    <Segment secondary>
                         <div align="center">
                             <Input onChange={this.getSearchThreads}
                                    icon={{name: 'search', circular: true, link: true}}

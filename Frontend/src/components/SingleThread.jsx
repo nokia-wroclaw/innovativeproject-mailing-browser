@@ -55,7 +55,7 @@ export default class SingleThread extends Component {
                 let MainMailNoAvast = fullMainMailAsHtml[0];
 
                 return (
-                    <div key={k} style={{marginLeft: `${100 * k}px`}}>
+                    <div key={k} style={{marginLeft: `${80 * (k<3 ? k : 2)}px`}}>
                         <Segment padded>
                             {ReactHtmlParser(MainMailNoAvast)}
                         </Segment>
@@ -76,9 +76,9 @@ export default class SingleThread extends Component {
                 let mailQuotes = str[1];
 
 
-                if (this.state.visible[k] === 0) {
+                if (this.state.visible[k] !== 0) {
                     return (
-                        <div key={k} style={{marginLeft: `${100 * k}px`}}>
+                        <div key={k} style={{marginLeft: `${80 * (k<3 ? k : 2)}px`}}>
                             <Segment padded>
                                 {ReactHtmlParser(mailBody)}
                             </Segment>
@@ -90,13 +90,13 @@ export default class SingleThread extends Component {
                 }
                 else {
                     return (
-                        <div key={k} style={{marginLeft: `${100 * k}px`}}>
+                        <div key={k} style={{marginLeft: `${80 * (k<3 ? k : 2)}px`}}>
                             <Segment padded>
                                 {ReactHtmlParser(mailBody)}
                             </Segment>
                             <Button content='Primary' color='grey' key={k} size='mini'
                                     onClick={() => this.changeVisible(k)}>Schowaj</Button>
-                            <div key={k} style={{marginLeft: `${30 * k}px`}}>
+                            <div key={k} style={{marginLeft: `${30 * (k<3 ? k : 2)}px`}}>
                                 <Segment padded color={"yellow"} >
                                     <div>
                                     {ReactHtmlParser(mailQuotes)}
