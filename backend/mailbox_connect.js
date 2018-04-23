@@ -29,6 +29,7 @@ imap.once("error", function (err) {
 imap.connect();
 
 function execute() {
+    setInterval(function () {
     imap.openBoxAsync("INBOX", false).then(function () {
         return imap.searchAsync(["UNSEEN"]);
     }).then(function (results) {
@@ -48,14 +49,11 @@ function execute() {
             return Promise.reject(err);
         });
         f.once("end", function () {
-            console.info("Done fetching all unseen messages.");
-            imap.end();
+            console.info("Done fetching all unseen messages.");        
         });
     }).catch(function (err) {
-        console.error("Error fetching messages: " + err.stack);
-        imap.end();
     });
-
+}, 2500);
 }
 
 function isThread(mail) {
@@ -137,5 +135,7 @@ function processMessage(msg, seqno) {
         });
     });
 }
+
+// setInterval(execute, 2500);
 
 module.exports = imap;
