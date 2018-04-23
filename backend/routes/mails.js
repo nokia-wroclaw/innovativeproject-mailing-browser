@@ -43,16 +43,5 @@ router.get('/threads/:id', function(req, res, next) {
   }) ;
 
 
-  router.get('/threads/sort=ASC', function (req, res, next) {
-    Thread.findAll({
-        order: [
-            ['threadDate', 'ASC'],
-        ]
-    }).then(result => {
-        res.json(result);
-        res.end();
-    });
-});
-
 
 module.exports = router;
