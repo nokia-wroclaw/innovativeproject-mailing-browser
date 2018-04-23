@@ -1,23 +1,26 @@
 import React, {Component} from 'react';
 import '../App.css';
-import {Container, Item, Segment} from 'semantic-ui-react'
+import {Dropdown, Input, Container, Item, Segment} from 'semantic-ui-react'
 import axios from 'axios';
 import _ from 'lodash';
 import {Link} from 'react-router-dom'
 import myImage from './mailImage.png';
 import Image from 'react-image-resizer';
 import './MenuMail.css';
+
 export default class MenuMail extends Component {
     constructor() {
         super();
         this.state = {
             mail: null,
-            threads: []
+            threads: [],
         };
     }
 
-    getAllThreads() {
-        axios.get("/api/threads")
+    getAllThreads(path) {
+        console.log("yup");
+        // "/api/threads"
+        axios.get(path)
             .then((response) => {
                 console.log(response);
                 this.setState({
@@ -30,80 +33,99 @@ export default class MenuMail extends Component {
             });
     }
 
-    getOneMail = (index) => {
-        var url = "/SingleThread";
-
-        return axios.get(url + index + '/')
-            .then(response => response.data[0]);
-    };
+    getSearchThreads = (e, {value}) => {
+        if(value !== '') {
+            axios.get("/search/" + value)
+                .then((response) => {
+                    console.log(response);
+                    this.setState({
+                        threads: response.data,
+                        total: response.data.length
+                    });
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+        else{
+            this.getAllThreads('/api/threads');
+        }
+    }
 
     componentDidMount() {
-        // this.getOneMail(this.props.match.params.id).then((result) => {
-        //     this.setState({mail: result});
-        // });
-        this.getAllThreads();
+        this.props.history.push('/home/mail');
+        this.getAllThreads('/api/threads');
         console.log('too');
 
-        console.log(this.state.threads);
+        console.log(this.state.mail);
 
     }
 
-    getNotFullContent(num){
-        let textLength = 50;
-        let string = "";
-        let stringShortText = this.state.threads[num].Text ? this.state.threads[num].Text : "";
+    getNotFullContent(mail) {
+        let fullMailContent = mail.Text.split("[https://ipmcdn.avast.com/images/icons/icon-envelope-tick-round-orange-animated-no-repeat-v1.gif]");
+        let stringShortText = fullMailContent[0].substring(0, 30);
 
-        if(stringShortText.length < textLength){
-        string = stringShortText;
-            return string;
-        }
-
-        for (let x = 0; x<textLength ; x++){
-            string += (this.state.threads[num].Text && this.state.threads[num].Text[x] ? this.state.threads[num].Text[x] : "")
-        }
-            return string+"...";
+        if (stringShortText !== fullMailContent[0])
+            return stringShortText + '...';
+        return stringShortText;
     }
 
-    renderMails(num) {
-        //console.log('rendermails');
-       // console.log(this.state.threads);
-        return <div >
-            <h2>{this.state.threads ? this.state.threads[num].Subject : null}</h2>
-             <h4>{this.state.threads[num].From} </h4>
-            <p>{this.getNotFullContent(num)}</p>
-        </div>
+
+    renderItem(mail, index) {
+        console.log('renderitem');
+        return (
+            <Item key={index}>
+                <Image src={myImage} height={100} width={160}/>
+                <Link to={'/singleThread/' + mail.id} style={{color: 'black'}}>
+                    <Item.Content>
+                        <Item.Header>{mail.Subject}</Item.Header>
+                        <Item.Meta>
+                            <span>Data: {mail.Date}</span>
+                            <br/>
+                            <span> Od: {mail.From}</span>
+                        </Item.Meta>
+                        <Item.Description>{this.getNotFullContent(mail)}</Item.Description>
+                    </Item.Content>
+                </Link>
+            </Item>
+        )
+
     }
 
     render() {
 
         const mails = _.map(this.state.threads, (mail, k) => {
-           var kk = k+1;
-            return (
-                <Item>
-                    <Image
-                        src = {myImage}
-                        width={150}
-                        height={150}
-                        //style={style.image}
-                    />
-                        <Link to={'/singleThread/' + mail.id } style={{color: 'black'}}>
-                        <div>
-                            {this.renderMails(k)}
-                        </div>
-                        </Link>
-                </Item>
-            )
+            return this.renderItem(mail, k);
         });
 
         return (
-            <Container text>
-                <Segment padded='very' tertiary>
-            <Item.Group divided>
-                {mails}
-            </Item.Group>
-            </Segment>
-            </Container>
+            <div>
+                <Container text>
+                    <Segment secondary>
+                        <div align="center">
+                            <Input onChange={this.getSearchThreads}
+                                   icon={{name: 'search', circular: true, link: true}}
+                                   placeholder='Szukaj...'/>
+                            <Dropdown text='Sortowanie' icon='filter' floating labeled button className='icon'>
+                                <Dropdown.Menu>
+                                    <Dropdown.Header icon='tags' content='Sortuj po...'/>
+                                    <Dropdown.Divider/>
+                                    <Dropdown.Item onClick={() => this.getAllThreads('/api/threads')}>Dacie malejąco(od
+                                        najnowszych)</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => this.getAllThreads('/threads/sort=ASC')}>Dacie
+                                        rosnąco(od najstarszych)</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => this.getAllThreads('/threads/HotThreads')}>Popularności</Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        </div>
 
+                        <Item.Group divided>
+                            {mails}
+                        </Item.Group>
+                    </Segment>
+                </Container>
+
+            </div>
         )
     }
 }
