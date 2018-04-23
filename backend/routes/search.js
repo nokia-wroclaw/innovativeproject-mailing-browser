@@ -54,7 +54,7 @@ router.get('/:searchPhrase', function (req, res, next) {
                           }
                     }
                     }).then((thread2)=>{
-                        res.json([thread,...thread2]);
+                        res.json([...thread,...thread2]);
                         res.end();
                     })
                 }          
