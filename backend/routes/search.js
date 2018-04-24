@@ -52,7 +52,10 @@ router.get('/:searchPhrase', function (req, res, next) {
                         messageId: {
                             [Op.or]: list
                           }
-                    }
+                    },
+                    order: [
+                        ['Date', 'ASC'],
+                    ]
                     }).then((thread2)=>{
                         res.json([...thread,...thread2]);
                         res.end();
