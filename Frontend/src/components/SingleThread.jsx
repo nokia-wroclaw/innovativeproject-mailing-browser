@@ -8,6 +8,7 @@ import {Item} from 'semantic-ui-react'
 import _ from 'lodash';
 import {Button} from 'semantic-ui-react';
 import './SingleThread.css';
+import moment from 'moment';
 
 
 export default class SingleThread extends Component {
@@ -127,7 +128,7 @@ export default class SingleThread extends Component {
                         <Header as='h2'>{this.state.mails ? this.state.mails[0].Subject : null}</Header>
                     </Segment>
                     <Segment tertiary>
-                        <Header as='h5'> Wysłane: {this.state.mails ? this.state.mails[0].Date : null}</Header>
+                        <Header as='h5'> Wysłane: {moment(this.state.mails ? this.state.mails[0].Date : null).format('DD/MM/YYYY, h:mm:ss')}</Header>
                         Od: {this.state.mails ? this.state.mails[0].From : null} <br/>
                         Do: {this.state.mails ? this.state.mails[0].To : null}
                     </Segment>
