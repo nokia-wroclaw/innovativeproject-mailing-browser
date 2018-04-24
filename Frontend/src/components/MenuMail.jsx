@@ -63,7 +63,7 @@ export default class MenuMail extends Component {
     }
 
     getNotFullContent(mail) {
-        let fullMailContent = mail.Text.split("[https://ipmcdn.avast.com/images/icons/icon-envelope-tick-round-orange-animated-no-repeat-v1.gif]");
+        let fullMailContent = (mail.Text ? mail.Text : "Mail posiada załącznik. Wejdź, by zobaczyć całość").split("[https://ipmcdn.avast.com/images/icons/icon-envelope-tick-round-orange-animated-no-repeat-v1.gif]");
         let stringShortText = fullMailContent[0].substring(0, 30);
 
         if (stringShortText !== fullMailContent[0])
