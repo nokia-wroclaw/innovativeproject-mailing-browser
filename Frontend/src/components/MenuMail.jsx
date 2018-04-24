@@ -7,6 +7,7 @@ import {Link} from 'react-router-dom'
 import myImage from './mailImage.png';
 import Image from 'react-image-resizer';
 import './MenuMail.css';
+import moment from 'moment';
 
 export default class MenuMail extends Component {
     constructor() {
@@ -80,7 +81,7 @@ export default class MenuMail extends Component {
                     <Item.Content>
                         <Item.Header>{mail.Subject}</Item.Header>
                         <Item.Meta>
-                            <span>Data: {mail.Date}</span>
+                            <span>Data: {moment(mail.Date).format('DD/MM/YYYY, H:MM')}</span>
                             <br/>
                             <span> Od: {mail.From}</span>
                         </Item.Meta>

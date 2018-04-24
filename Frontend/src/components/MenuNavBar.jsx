@@ -13,7 +13,7 @@ export default class MenuNavBar extends Component {
     return (
       <div>
         <Menu pointing secondary>
-            <Menu.Item name='home' active={activeItem === 'home'} onClick={this.handleItemClick}> <Link to={"/mail/0"}> Mailing group browser  </Link> </Menu.Item>
+            <Menu.Item name='home' active={activeItem === 'home'} onClick={this.handleItemClick}> <Link to={"/home/mail"}> Mailing group browser  </Link> </Menu.Item>
         </Menu>
       </div>
     )
