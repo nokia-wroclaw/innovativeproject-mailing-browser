@@ -7,6 +7,7 @@ import {Link} from 'react-router-dom'
 import myImage from './mailImage.png';
 import Image from 'react-image-resizer';
 import './MenuMail.css';
+import moment from 'moment';
 
 export default class MenuMail extends Component {
     constructor() {
@@ -62,7 +63,7 @@ export default class MenuMail extends Component {
     }
 
     getNotFullContent(mail) {
-        let fullMailContent = mail.Text.split("[https://ipmcdn.avast.com/images/icons/icon-envelope-tick-round-orange-animated-no-repeat-v1.gif]");
+        let fullMailContent = (mail.Text ? mail.Text : "Mail posiada załącznik. Wejdź, by zobaczyć całość").split("[https://ipmcdn.avast.com/images/icons/icon-envelope-tick-round-orange-animated-no-repeat-v1.gif]");
         let stringShortText = fullMailContent[0].substring(0, 30);
 
         if (stringShortText !== fullMailContent[0])
@@ -80,7 +81,7 @@ export default class MenuMail extends Component {
                     <Item.Content>
                         <Item.Header>{mail.Subject}</Item.Header>
                         <Item.Meta>
-                            <span>Data: {mail.Date}</span>
+                            <span>Data: {moment(mail.Date).format('DD/MM/YYYY, H:MM')}</span>
                             <br/>
                             <span> Od: {mail.From}</span>
                         </Item.Meta>
