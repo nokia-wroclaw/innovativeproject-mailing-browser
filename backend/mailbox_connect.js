@@ -5,7 +5,28 @@ var Thread = MyThread.Thread;
 const Sequelize = require('sequelize')
 const Op = Sequelize.Op
 
-console.log(Mail);
+var elasticsearch = require('elasticsearch')
+var client = new elasticsearch.Client({
+    host: 'localhost:9200',
+    log: [{type: "stdio", levels: ["error"]}]
+});
+
+// client.delete({
+//     index: 'threads',
+//     type: 'thread',
+//     id: 'hrriWGMB95YZjs4mGiwU'
+// }, function (error, response) {
+
+// });
+//
+//
+//
+//
+//grrWWGMB95YZjs4mYCwm
+//g7rZWGMB95YZjs4mzSz0
+//hbrgWGMB95YZjs4mtCxE
+//hLreWGMB95YZjs4mzSw4
+//console.log(Mail);
 
 const Imap = require('imap'),
     parser = require('mailparser').simpleParser,
@@ -63,65 +84,91 @@ function isThread(mail) {
 
 function processMail(mail) {
 
-    var [ref] = String(mail.references).split(",");
+    // var [ref] = String(mail.references).split(",");
 
-    Thread.find({
-        where: {
-            messageId: ref
-        }
-    }).then((result) => {
-        Mail.create({
-            Subject: mail.subject,
-            From: mail.from.value[0].address,
-            To: mail.to.value[0].address,
-            Date: mail.date,
-            Text: mail.text,
-            TextAsHtml: mail.html,
-            messageId: mail.messageId,
-            reference: ref,
-            threadId: result.id
+    // Thread.find({
+    //     where: {
+    //         messageId: ref
+    //     }
+    // }).then((result) => {
+    //     Mail.create({
+    //         Subject: mail.subject,
+    //         From: mail.from.value[0].address,
+    //         To: mail.to.value[0].address,
+    //         Date: mail.date,
+    //         Text: mail.text,
+    //         TextAsHtml: mail.html,
+    //         messageId: mail.messageId,
+    //         reference: ref,
+    //         threadId: result.id
 
-            //  }).then(function(record){
-            //   return record.setThread(result);
-            //   });
-        });
+    //         //  }).then(function(record){
+    //         //   return record.setThread(result);
+    //         //   });
+    //     });
 
-    Thread.update({
-            threadDate: mail.date},
-        {
-            where: {
-                [Op.and]:
-                    [
-                        {messageId: ref},
-                        {Date: {[Op.lt]: mail.date}}
-                    ]
-            }
-        }
-    );
-        Thread.update({
-            NumberOfReplies: Sequelize.literal('"NumberOfReplies" + 1')},
-            {
-                where: {messageId: ref}
-            }
-        );
+    // Thread.update({
+    //         threadDate: mail.date},
+    //     {
+    //         where: {
+    //             [Op.and]:
+    //                 [
+    //                     {messageId: ref},
+    //                     {Date: {[Op.lt]: mail.date}}
+    //                 ]
+    //         }
+    //     }
+    // );
+    //     Thread.update({
+    //         NumberOfReplies: Sequelize.literal('"NumberOfReplies" + 1')},
+    //         {
+    //             where: {messageId: ref}
+    //         }
+    //     );
 
-    });
+    // });
 }
 
 
 function processThreads(mail) {
 
-    Thread.create({
-        Subject: mail.subject,
-        From: mail.from.value[0].address,
-        To: mail.to.value[0].address,
-        Date: mail.date,
-        threadDate: mail.date,
-        Text: mail.text,
-        TextAsHtml: mail.html,
-        messageId: mail.messageId,
-        NumberOfReplies: 0
-    });
+    // Thread.create({
+    //     Subject: mail.subject,
+    //     From: mail.from.value[0].address,
+    //     To: mail.to.value[0].address,
+    //     Date: mail.date,
+    //     threadDate: mail.date,
+    //     Text: mail.text,
+    //     TextAsHtml: mail.html,
+    //     messageId: mail.messageId,
+    //     NumberOfReplies: 0
+    // });
+
+    client.index({
+        index: 'threads',
+        type: 'thread',
+        id: '2',
+        body: {
+            Subject: mail.subject,
+            From: mail.from.value[0].address,
+            To: mail.to.value[0].address,
+            Date: mail.date,
+            ThreadDate: mail.date,
+            Text: mail.text,
+            TextAsHtml: mail.html,
+            MessageId: mail.messageId,
+            NumberOfReplies: 0
+        }
+    }, function (error, response) {
+        if(error) {
+            console.log("Error:");
+            console.log(error);
+        }
+        if(response) {
+            console.log("Response:");
+            console.log(response);
+        }
+    });  
 }
 
 function processMessage(msg, seqno) {
@@ -138,5 +185,5 @@ function processMessage(msg, seqno) {
 }
 
 // setInterval(execute, 2500);
-
-module.exports = imap;
+module.exports.client = client;
+module.exports.imap = imap;
