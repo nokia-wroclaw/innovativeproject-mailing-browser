@@ -6,17 +6,29 @@ const MyThread = require('../db_create')
 var Thread = MyThread.Thread
 const Sequelize = require('sequelize')
 const Op = Sequelize.Op
-
+const MyClient = require('../mailbox_connect')
+var client = MyClient.client;
 
 router.get('/threads', function (req, res, next) {
-    Thread.findAll({
-        order: [
-            ['threadDate', 'DESC'],
+    // Thread.findAll({
+    //     order: [
+    //         ['threadDate', 'DESC'],
+    //     ]
+    // }).then(result => {
+    //     res.json(result);
+    //     res.end();
+    // });
+
+    client.msearch({
+        body: [
+            { index: 'threads', type: 'thread'},
+            { query: {match_all: {}}}
         ]
-    }).then(result => {
-        res.json(result);
-        res.end();
-    });
+    }, function(error, response) {
+        console.log("Response:");
+        // console.log(JSON.stringify(response.responses[0].hits.hits));
+        res.json(response.responses[0].hits.hits);
+    });    
 });
 
 router.get('/threads/:id', function(req, res, next) {

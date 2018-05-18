@@ -81,7 +81,7 @@ export default class MenuMail extends Component {
                     <Item.Content>
                         <Item.Header>{mail.Subject}</Item.Header>
                         <Item.Meta>
-                            <span>Data: {moment(mail.Date).format('DD/MM/YYYY, H:MM')}</span>
+                            <span>Data: {moment(mail.Date).format('DD/MM/YYYY, HH:mm')}</span>
                             <br/>
                             <span> Od: {mail.From}</span>
                         </Item.Meta>
