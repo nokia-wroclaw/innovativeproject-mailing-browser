@@ -1,16 +1,15 @@
-const MyMail = require('./db_create')
-var Mail = MyMail.Mail;
-const MyThread = require('./db_create')
-var Thread = MyThread.Thread;
-const Sequelize = require('sequelize')
-const Op = Sequelize.Op
-
 var elasticsearch = require('elasticsearch')
 var client = new elasticsearch.Client({
     host: 'localhost:9200',
     log: [{type: "stdio", levels: ["error"]}]
 });
 
+client.authenticate().then(() => {
+    console.log('Connection has been established successfully.');
+}).catch(err => {
+    console.error('Unable to connect to the database:', err);
+
+});
 // client.delete({
 //     index: 'threads',
 //     type: 'thread',

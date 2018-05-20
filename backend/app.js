@@ -12,7 +12,6 @@ app.use("/search",search);
 app.use("/api",mails);
 app.use("/",threads);
 
-const Sequelize = require('sequelize');   //to connect with database
 module.exports = app;
 
 
