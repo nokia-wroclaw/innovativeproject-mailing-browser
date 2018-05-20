@@ -4,6 +4,7 @@ const MyThread = require('./db_create')
 var Thread = MyThread.Thread;
 const Sequelize = require('sequelize')
 const Op = Sequelize.Op
+const uuidv4 = require('uuid/v4');
 
 var elasticsearch = require('elasticsearch')
 var client = new elasticsearch.Client({
@@ -14,7 +15,12 @@ var client = new elasticsearch.Client({
 // client.delete({
 //     index: 'threads',
 //     type: 'thread',
-//     id: 'hrriWGMB95YZjs4mGiwU'
+//     id: '1'
+// }, function (error, response) {
+
+// });
+// client.indices.delete({
+//     index: '*'
 // }, function (error, response) {
 
 // });
@@ -143,6 +149,18 @@ function processThreads(mail) {
     //     messageId: mail.messageId,
     //     NumberOfReplies: 0
     // });
+    var names = "";
+    for(i = 0; i < mail.attachments.length; i++){
+        var filename = mail.attachments[i].filename;
+        var extension = String(filename).split(".");    
+        var name = uuidv4() + "." + extension[1];
+        console.log(mail.attachments.length);
+        require('fs').writeFile("./att/" + name, mail.attachments[i].content, 'base64', function(err) {
+            console.log(err);
+        });
+        
+        names += name + " ";
+    }
 
     client.index({
         index: 'threads',
@@ -157,7 +175,8 @@ function processThreads(mail) {
             Text: mail.text,
             TextAsHtml: mail.html,
             MessageId: mail.messageId,
-            NumberOfReplies: 0
+            NumberOfReplies: 0,
+            Att: String(names)
         }
     }, function (error, response) {
         if(error) {
