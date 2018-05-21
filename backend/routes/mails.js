@@ -9,6 +9,42 @@ const Op = Sequelize.Op
 const MyClient = require('../mailbox_connect')
 var client = MyClient.client;
 
+router.get('/xd', function (req, res, next) {
+    client.indices.delete({
+        index: '*'
+    }, function (error, response) {
+
+    });
+    // Thread.findAll({
+    //     order: [
+    //         ['threadDate', 'DESC'],
+    //     ]
+    // }).then(result => {
+    //     res.json(result);
+    //     res.end();
+    // });
+
+    // client.msearch({
+    //     body: [
+    //         { index: 'threads', type: 'thread'},
+    //         { query: {match_all: {}}}
+    //     ]
+    // }, function(error, response) {
+    //     console.log("Response:");
+    //     // console.log(JSON.stringify(response.responses[0].hits.hits));
+    //     res.json(response.responses[0].hits.hits);
+    // });    
+
+    // client.search({    //dobry search
+    //     index: 'threads',
+    //     q: 'watek,'
+    // }, function(error, response) {
+    //     console.log("Response:");
+    //     res.json(response.hits.hits);
+    // });    
+
+});
+
 router.get('/threads', function (req, res, next) {
     // Thread.findAll({
     //     order: [
@@ -19,16 +55,40 @@ router.get('/threads', function (req, res, next) {
     //     res.end();
     // });
 
-    client.msearch({
-        body: [
-            { index: 'threads', type: 'thread'},
-            { query: {match_all: {}}}
-        ]
+    // client.msearch({
+    //     body: [
+    //         { index: 'threads', type: 'thread'},
+    //         { query: {match_all: {}}}
+    //     ]
+    // }, function(error, response) {
+    //     console.log("Response:");
+    //     // console.log(JSON.stringify(response.responses[0].hits.hits));
+    //     res.json(response.responses[0].hits.hits);
+    //     console.log(response.responses[0]);
+    // });    
+
+    client.search({    //dobry search
+        index: 'mails',
+        size: 1000,
+        body: {
+            query: { match_all: {}}
+        }
     }, function(error, response) {
         console.log("Response:");
-        // console.log(JSON.stringify(response.responses[0].hits.hits));
-        res.json(response.responses[0].hits.hits);
-    });    
+        res.json(response.hits.hits);
+        console.log(response);
+    });   
+
+    // client.search({    //dobry search
+    //     index: 'threads',
+    //     size: 1000,
+    //     q: 'innovative.project@outlook.com'
+    // }, function(error, response) {
+    //     console.log("Response:");
+    //     res.json(response.hits.hits);
+    //     console.log(response);
+    // });    
+
 });
 
 router.get('/threads/:id', function(req, res, next) {

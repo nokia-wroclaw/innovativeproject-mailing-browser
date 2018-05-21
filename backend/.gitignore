@@ -3,4 +3,4 @@
 *.iml
 *.iws
 config.js
-.backend/att/
+/backend/att/
