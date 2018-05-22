@@ -5,12 +5,15 @@ var Thread = MyThread.Thread;
 const Sequelize = require('sequelize')
 const Op = Sequelize.Op
 const uuidv4 = require('uuid/v4');
+var waitUntil = require('wait-until');
 
 var elasticsearch = require('elasticsearch')
 var client = new elasticsearch.Client({
     host: 'localhost:9200',
     log: [{type: "stdio", levels: ["error"]}]
 });
+
+const threads = [], mails = [];
 
 // client.indices.create({
 //     index: 'threads'
@@ -33,16 +36,6 @@ var client = new elasticsearch.Client({
 // }, function (error, response) {
 
 // });
-
-//
-//
-//
-//
-//grrWWGMB95YZjs4mYCwm
-//g7rZWGMB95YZjs4mzSz0
-//hbrgWGMB95YZjs4mtCxE
-//hLreWGMB95YZjs4mzSw4
-//console.log(Mail);
 
 const Imap = require('imap'),
     parser = require('mailparser').simpleParser,
@@ -99,7 +92,12 @@ function isThread(mail) {
 }
 
 function processMail(mail) {
-
+    //TUTAJ DAC Z LIBKI wait-until ze dopoki client.search nie zwroci czegos innego niz null to niech probuje znowu
+    ////~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ////~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ////~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~~~~~~~~~~~~~~~~~~~~~~~~`
     var ref = String(mail.references).split(",");
 
     var names = null;
@@ -107,18 +105,36 @@ function processMail(mail) {
         var filename = mail.attachments[i].filename;
         var extension = String(filename).split(".");    
         var name = uuidv4() + "." + extension[1];
-        console.log(mail.attachments.length);
         require('fs').writeFile("./att/" + name, mail.attachments[i].content, 'base64', function(err) {
             console.log(err);
         });
         
         names += name + " ";
     }
-    
-    client.search({
-        index: 'threads',
-        q: ref[0] 
-    }, function (error, response) {
+    var search_result = null;
+    var xd = null;
+
+    waitUntil()
+    .interval(200)  //???????????????????????????????????????????????????????????????
+    .times(1000)     //???????????????????????????????????????????????????????????????
+    .condition(function() {
+        client.search({
+            index: 'threads',
+            body: {
+                query: {
+                    match_phrase: {
+                       MessageId : ref[0]
+                    }
+                }
+            }
+        }, function (error, response) {
+            if(response.hits.total != 0)
+                search_result = response.hits;
+        })
+        return (search_result != null ? search_result : null);
+    })
+    .done(function(result) {
+        // do stuff
         client.index({
             index: 'mails',
             type: 'mail',
@@ -131,7 +147,7 @@ function processMail(mail) {
                 TextAsHtml: mail.html,
                 messageId: mail.messageId,
                 reference: ref[0],
-                threadId: response.hits.hits[0]._id,
+                threadId: result.hits[0]._id,
                 Att: names
             }
         }, function (error, response) {
@@ -142,137 +158,42 @@ function processMail(mail) {
             if(response) {
                 console.log("Response:");
                 console.log(response);
+                client.update({
+                    index: 'threads',
+                    type: 'thread',
+                    id: result.hits[0]._id,
+                    body: {
+                        doc: {
+                            ThreadDate: mail.date,
+                            NumberOfReplies: result.hits[0]._source.NumberOfReplies + 1
+                        }
+                    },
+                    retryOnConflict: 1000    //???????????????????????????????????????????????????????????????
+                }).catch( function (error) { 
+                    console.log(error);
+                })
             }
         });  
 
-        client.update({
-            index: 'threads',
-            type: 'thread',
-            id: response.hits.hits[0]._id,
-            body: {
-                doc: {
-                    ThreadDate: mail.date,
-                    NumberOfReplies: response.hits.hits[0]._source.NumberOfReplies + 1
-                }
-            }
-        });
+        
     });
-
-    // client.index({
-    //     index: 'mails',
-    //     type: 'mail',
-    //     id: '1',
-    //     body: {
-    //         Subject: mail.subject,
-    //         From: mail.from.value[0].address,
-    //         To: mail.to.value[0].address,
-    //         Date: mail.date,
-    //         Text: mail.text,
-    //         TextAsHtml: mail.html,
-    //         messageId: mail.messageId,
-    //         reference: ref[0],
-    //         threadId: thread._id,
-    //         Att: names
-    //     }
-    // }, function (error, response) {
-    //     if(error) {
-    //         console.log("Error:");
-    //         console.log(error);
-    //     }
-    //     if(response) {
-    //         console.log("Response:");
-    //         console.log(response);
-    //     }
-    // });  
-
-
-
-
-    // Thread.find({
-    //     where: {
-    //         messageId: ref
-    //     }
-    // }).then((result) => {
-    //     Mail.create({
-    //         Subject: mail.subject,
-    //         From: mail.from.value[0].address,
-    //         To: mail.to.value[0].address,
-    //         Date: mail.date,
-    //         Text: mail.text,
-    //         TextAsHtml: mail.html,
-    //         messageId: mail.messageId,
-    //         reference: ref,
-    //         threadId: result.id
-
-    //         //  }).then(function(record){
-    //         //   return record.setThread(result);
-    //         //   });
-    //     });
-
-    // client.update({
-    //     index: 'threads',
-    //     type: 'thread',
-    //     id: thread._id,
-    //     body: {
-    //         doc: {
-    //             threadDate: mail.date,
-    //             NumberOfReplies: NumberOfReplies+1
-    //         }
-    //     }
-    // });
-
-
-
-    // Thread.update({
-    //         threadDate: mail.date},
-    //         {
-    //             where: {
-    //                 [Op.and]:
-    //                     [
-    //                         {messageId: ref},
-    //                         {Date: {[Op.lt]: mail.date}}
-    //                     ]
-    //             }
-    //         }
-    // );
-    //     Thread.update({
-    //         NumberOfReplies: Sequelize.literal('"NumberOfReplies" + 1')},
-    //         {
-    //             where: {messageId: ref}
-    //         }
-    //     );
-
-    // });
 }
 
 
 function processThreads(mail) {
-
-    // Thread.create({
-    //     Subject: mail.subject,
-    //     From: mail.from.value[0].address,
-    //     To: mail.to.value[0].address,
-    //     Date: mail.date,
-    //     threadDate: mail.date,
-    //     Text: mail.text,
-    //     TextAsHtml: mail.html,
-    //     messageId: mail.messageId,
-    //     NumberOfReplies: 0
-    // });
+    // console.log(threads.length);
     var names = null;
     for(i = 0; i < mail.attachments.length; i++){
         var filename = mail.attachments[i].filename;
         var extension = String(filename).split(".");    
         var name = uuidv4() + "." + extension[1];
-        console.log(mail.attachments.length);
         require('fs').writeFile("./att/" + name, mail.attachments[i].content, 'base64', function(err) {
             console.log(err);
         });
         
         names += name + " ";
     }
-
-    client.index({
+    return client.index({
         index: 'threads',
         type: 'thread',
         body: {
@@ -308,9 +229,9 @@ function processMessage(msg, seqno) {
     msg.on("body", function (stream) {
         parser(stream).then(mail => {
             if (isThread(mail)) {
-                // processThreads(mail);
+                 processThreads(mail);                
             } else {
-                // processMail(mail);
+                  processMail(mail);             
             }
         });
     });
