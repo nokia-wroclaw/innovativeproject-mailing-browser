@@ -170,7 +170,6 @@ function processThreads(mail) {
         
         names += name + " ";
     }
-    console.log("gowno");
     return client.index({
         index: 'threads',
         type: 'thread',
