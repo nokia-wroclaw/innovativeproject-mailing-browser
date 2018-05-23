@@ -4,19 +4,28 @@ var client = new elasticsearch.Client({
     log: [{type: "stdio", levels: ["error"]}]
 });
 
-client.authenticate().then(() => {
-    console.log('Connection has been established successfully.');
-}).catch(err => {
-    console.error('Unable to connect to the database:', err);
+// client.indices.create({
+//     index: 'threads'
+// });
 
-});
+// client.indices.create({
+//     index: 'mails'
+// });
+
 // client.delete({
 //     index: 'threads',
 //     type: 'thread',
-//     id: 'hrriWGMB95YZjs4mGiwU'
+//     id: '1'
 // }, function (error, response) {
 
 // });
+
+// client.indices.delete({
+//     index: '*'
+// }, function (error, response) {
+
+// });
+
 //
 //
 //
@@ -83,7 +92,93 @@ function isThread(mail) {
 
 function processMail(mail) {
 
-    // var [ref] = String(mail.references).split(",");
+    var ref = String(mail.references).split(",");
+
+    var names = null;
+    for(i = 0; i < mail.attachments.length; i++){
+        var filename = mail.attachments[i].filename;
+        var extension = String(filename).split(".");
+        var name = uuidv4() + "." + extension[1];
+        console.log(mail.attachments.length);
+        require('fs').writeFile("./att/" + name, mail.attachments[i].content, 'base64', function(err) {
+            console.log(err);
+        });
+
+        names += name + " ";
+    }
+
+    client.search({
+        index: 'threads',
+        q: ref[0]
+    }, function (error, response) {
+        client.index({
+            index: 'mails',
+            type: 'mail',
+            body: {
+                Subject: mail.subject,
+                From: mail.from.value[0].address,
+                To: mail.to.value[0].address,
+                Date: mail.date,
+                Text: mail.text,
+                TextAsHtml: mail.html,
+                messageId: mail.messageId,
+                reference: ref[0],
+                threadId: response.hits.hits[0]._id,
+                Att: names
+            }
+        }, function (error, response) {
+            if(error) {
+                console.log("Error:");
+                console.log(error);
+            }
+            if(response) {
+                console.log("Response:");
+                console.log(response);
+            }
+        });
+
+        client.update({
+            index: 'threads',
+            type: 'thread',
+            id: response.hits.hits[0]._id,
+            body: {
+                doc: {
+                    ThreadDate: mail.date,
+                    NumberOfReplies: response.hits.hits[0]._source.NumberOfReplies + 1
+                }
+            }
+        });
+    });
+
+    // client.index({
+    //     index: 'mails',
+    //     type: 'mail',
+    //     id: '1',
+    //     body: {
+    //         Subject: mail.subject,
+    //         From: mail.from.value[0].address,
+    //         To: mail.to.value[0].address,
+    //         Date: mail.date,
+    //         Text: mail.text,
+    //         TextAsHtml: mail.html,
+    //         messageId: mail.messageId,
+    //         reference: ref[0],
+    //         threadId: thread._id,
+    //         Att: names
+    //     }
+    // }, function (error, response) {
+    //     if(error) {
+    //         console.log("Error:");
+    //         console.log(error);
+    //     }
+    //     if(response) {
+    //         console.log("Response:");
+    //         console.log(response);
+    //     }
+    // });
+
+
+
 
     // Thread.find({
     //     where: {
@@ -106,17 +201,31 @@ function processMail(mail) {
     //         //   });
     //     });
 
-    // Thread.update({
-    //         threadDate: mail.date},
-    //     {
-    //         where: {
-    //             [Op.and]:
-    //                 [
-    //                     {messageId: ref},
-    //                     {Date: {[Op.lt]: mail.date}}
-    //                 ]
+    // client.update({
+    //     index: 'threads',
+    //     type: 'thread',
+    //     id: thread._id,
+    //     body: {
+    //         doc: {
+    //             threadDate: mail.date,
+    //             NumberOfReplies: NumberOfReplies+1
     //         }
     //     }
+    // });
+
+
+
+    // Thread.update({
+    //         threadDate: mail.date},
+    //         {
+    //             where: {
+    //                 [Op.and]:
+    //                     [
+    //                         {messageId: ref},
+    //                         {Date: {[Op.lt]: mail.date}}
+    //                     ]
+    //             }
+    //         }
     // );
     //     Thread.update({
     //         NumberOfReplies: Sequelize.literal('"NumberOfReplies" + 1')},
@@ -142,11 +251,22 @@ function processThreads(mail) {
     //     messageId: mail.messageId,
     //     NumberOfReplies: 0
     // });
+    var names = null;
+    for(i = 0; i < mail.attachments.length; i++){
+        var filename = mail.attachments[i].filename;
+        var extension = String(filename).split(".");
+        var name = uuidv4() + "." + extension[1];
+        console.log(mail.attachments.length);
+        require('fs').writeFile("./att/" + name, mail.attachments[i].content, 'base64', function(err) {
+            console.log(err);
+        });
+
+        names += name + " ";
+    }
 
     client.index({
         index: 'threads',
         type: 'thread',
-        id: '2',
         body: {
             Subject: mail.subject,
             From: mail.from.value[0].address,
@@ -156,7 +276,8 @@ function processThreads(mail) {
             Text: mail.text,
             TextAsHtml: mail.html,
             MessageId: mail.messageId,
-            NumberOfReplies: 0
+            NumberOfReplies: 0,
+            Att: names
         }
     }, function (error, response) {
         if(error) {
@@ -168,6 +289,10 @@ function processThreads(mail) {
             console.log(response);
         }
     });  
+
+    // client.indices.refresh({
+    //     index: 'threads'
+    // });
 }
 
 function processMessage(msg, seqno) {
@@ -175,9 +300,9 @@ function processMessage(msg, seqno) {
     msg.on("body", function (stream) {
         parser(stream).then(mail => {
             if (isThread(mail)) {
-                processThreads(mail);
+                // processThreads(mail);
             } else {
-                processMail(mail);
+                // processMail(mail);
             }
         });
     });
