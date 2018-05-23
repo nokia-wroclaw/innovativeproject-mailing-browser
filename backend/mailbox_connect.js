@@ -300,7 +300,7 @@ function processMessage(msg, seqno) {
     msg.on("body", function (stream) {
         parser(stream).then(mail => {
             if (isThread(mail)) {
-                // processThreads(mail);
+                processThreads(mail);
             } else {
                 // processMail(mail);
             }

@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
-const MyMail = require('../db_create')
-var Mail = MyMail.Mail;
-const MyThread = require('../db_create')
-var Thread = MyThread.Thread
+// const MyMail = require('../db_create')
+// var Mail = MyMail.Mail;
+// const MyThread = require('../db_create')
+// var Thread = MyThread.Thread
 const Sequelize = require('sequelize')
 const Op = Sequelize.Op
 const MyClient = require('../mailbox_connect')
