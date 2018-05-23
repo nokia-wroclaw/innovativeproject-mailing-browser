@@ -69,12 +69,11 @@ router.get('/threads/:id', function(req, res, next) {
         index: 'threads',
         body: {
             query: {
-                term: {
-                    Date: req.params.id
+                match_phrase: {
+                    MessageId: req.params.id
                 }
             }
         }
-        // q: req.params.id 
     }, function (error, response) {
         console.log(response);
         console.log(req.params.id);

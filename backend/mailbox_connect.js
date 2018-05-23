@@ -78,12 +78,6 @@ function execute() {
             return Promise.reject(err);
         });
         f.once("end", function () {
-            const promises = threads.map(processThreads);
-            Promise.all(promises).then(() => {
-                mails.forEach(processMail)
-            });
-            console.log(threads.length);
-            console.log(mails.length);
             console.info("Done fetching all unseen messages.");        
         });
     }).catch(function (err) {
@@ -206,13 +200,9 @@ function processMessage(msg, seqno) {
     msg.on("body", function (stream) {
         parser(stream).then(mail => {
             if (isThread(mail)) {
-                console.log("jest if");
-                threads.push(mail);
-                //  processThreads(mail);                
+                 processThreads(mail);                
             } else {
-                console.log("jest else");
-                //  processMail(mail);
-                mails.push(mail);                
+                //  processMail(mail);             
             }
         });
     });
