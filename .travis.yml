@@ -1,0 +1,20 @@
+language: node_js
+sudo: required
+node_js:
+ - "node"
+services:
+ - docker
+env:
+  - DOCKER_COMPOSE_VERSION=1.21.2
+before_install:
+- docker pull elasticsearch
+- docker build -t elasticsearch 
+stages:
+- name: build
+  if: branch = development
+jobs:
+  include:
+    - stage: build
+      script: docker-compose up -d --build 
+  
+ 

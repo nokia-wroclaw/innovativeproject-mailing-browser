@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  backend:
+    container_name: backend
+    depends_on:
+      - elasticsearch
+    build:
+      context: ./backend
+    restart: unless-stopped
+    links:
+        - elasticsearch
+    ports:
+      - "3002:3000"
+
+  frontend:
+    container_name: frontend
+    build:
+      context: ./Frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+  elasticsearch:
+    image: elasticsearch
+    container_name: elasticsearch
+    restart: unless-stopped
