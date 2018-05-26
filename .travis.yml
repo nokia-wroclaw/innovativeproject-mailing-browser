@@ -8,13 +8,14 @@ env:
   - DOCKER_COMPOSE_VERSION=1.21.2
 before_install:
 - docker pull elasticsearch
-- docker build -t elasticsearch 
 stages:
 - name: build
 jobs:
   include:
     - stage: build
-      script: docker-compose up  -d --build
+      script:
+        - docker build -t elasticsearch
+        -docker-compose up  -d --build
 
   
  
