@@ -1,9 +1,3 @@
-const MyMail = require('./db_create')
-var Mail = MyMail.Mail;
-const MyThread = require('./db_create')
-var Thread = MyThread.Thread;
-const Sequelize = require('sequelize')
-const Op = Sequelize.Op
 const uuidv4 = require('uuid/v4');
 var waitUntil = require('wait-until');
 
@@ -12,30 +6,6 @@ var client = new elasticsearch.Client({
     host: 'localhost:9200',
     log: [{type: "stdio", levels: ["error"]}]
 });
-
-const threads = [], mails = [];
-
-// client.indices.create({
-//     index: 'threads'
-// });
-
-// client.indices.create({
-//     index: 'mails'
-// });
-
-// client.delete({
-//     index: 'threads',
-//     type: 'thread',
-//     id: '1'
-// }, function (error, response) {
-
-// });
-
-// client.indices.delete({
-//     index: '*'
-// }, function (error, response) {
-
-// });
 
 const Imap = require('imap'),
     parser = require('mailparser').simpleParser,
@@ -92,12 +62,6 @@ function isThread(mail) {
 }
 
 function processMail(mail) {
-    //TUTAJ DAC Z LIBKI wait-until ze dopoki client.search nie zwroci czegos innego niz null to niech probuje znowu
-    ////~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ////~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ////~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //~~~~~~~~~~~~~~~~~~~~~~~~`
     var ref = String(mail.references).split(",");
 
     var names = null;
@@ -112,11 +76,10 @@ function processMail(mail) {
         names += name + " ";
     }
     var search_result = null;
-    var xd = null;
 
     waitUntil()
-    .interval(200)  //???????????????????????????????????????????????????????????????
-    .times(1000)     //???????????????????????????????????????????????????????????????
+    .interval(200) 
+    .times(1000)    
     .condition(function() {
         client.search({
             index: 'threads',
@@ -168,7 +131,7 @@ function processMail(mail) {
                             NumberOfReplies: result.hits[0]._source.NumberOfReplies + 1
                         }
                     },
-                    retryOnConflict: 1000    //???????????????????????????????????????????????????????????????
+                    retryOnConflict: 1000
                 }).catch( function (error) { 
                     console.log(error);
                 })
@@ -181,7 +144,6 @@ function processMail(mail) {
 
 
 function processThreads(mail) {
-    // console.log(threads.length);
     var names = null;
     for(i = 0; i < mail.attachments.length; i++){
         var filename = mail.attachments[i].filename;
@@ -218,10 +180,6 @@ function processThreads(mail) {
             console.log(response);
         }
     });  
-
-    // client.indices.refresh({
-    //     index: 'threads'
-    // });
 }
 
 function processMessage(msg, seqno) {
@@ -237,6 +195,5 @@ function processMessage(msg, seqno) {
     });
 }
 
-// setInterval(execute, 2500);
 module.exports.client = client;
 module.exports.imap = imap;
