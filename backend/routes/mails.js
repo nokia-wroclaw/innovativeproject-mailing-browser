@@ -54,8 +54,20 @@ router.get('/threads/:id', function(req, res, next) {
             }
         }
     }, function (error, response) {
-        console.log(response);
-        console.log(req.params.id);
+        client.search({
+            index: 'mails',
+            body: {
+                sort: [{"Date": { "order": "asc"}}],
+                query: {
+                    match_phrase: {
+                        reference: response.hits.hits[0]._source.MessageId
+                    }
+                }
+            }
+        }, function (error, response2) {
+            res.json([...response.hits.hits,...response2.hits.hits]);
+            res.end();
+        })
     })
 })
 
