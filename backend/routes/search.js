@@ -1,11 +1,5 @@
 var express = require('express');
 var router = express.Router();
-// const MyMail = require('../db_create')
-// var Mail = MyMail.Mail;
-// const MyThread = require('../db_create')
-//var Thread = MyThread.Thread
-const Sequelize = require('sequelize')
-const Op = Sequelize.Op
 
 router.get('/:searchPhrase', function (req, res, next) {
     Thread.findAll({

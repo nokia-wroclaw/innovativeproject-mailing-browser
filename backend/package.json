@@ -21,6 +21,7 @@
     "sequelize": "^4.37.1",
     "sequelize-to-json": "^0.10.3",
     "serve-favicon": "~2.4.5",
-    "uuid": "^3.2.1"
+    "uuid": "^3.2.1",
+    "wait-until": "0.0.2"
   }
 }
