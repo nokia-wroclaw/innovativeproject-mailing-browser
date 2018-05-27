@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "body-parser": "~1.18.2",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
@@ -19,6 +20,8 @@
     "pug": "2.0.0-beta11",
     "sequelize": "^4.37.1",
     "sequelize-to-json": "^0.10.3",
-    "serve-favicon": "~2.4.5"
+    "serve-favicon": "~2.4.5",
+    "socket.io": "^2.1.1",
+    "websocket": "^1.0.26"
   }
 }
