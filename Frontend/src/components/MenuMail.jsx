@@ -8,6 +8,7 @@ import myImage from './mailImage.png';
 import Image from 'react-image-resizer';
 import './MenuMail.css';
 import moment from 'moment';
+import socketIOClient from "socket.io-client";
 
 export default class MenuMail extends Component {
     constructor() {
@@ -15,7 +16,26 @@ export default class MenuMail extends Component {
         this.state = {
             mail: null,
             threads: [],
+            response: false,
+            endpoint: "http://127.0.0.1:3000"
         };
+    }
+    componentDidMount() {
+        this.props.history.push('/home/mail');
+        this.getAllThreads('/api/threads');
+
+        const { endpoint } = this.state;
+        const socket = socketIOClient(endpoint);
+
+        socket.on("thread", response => {
+            console.log(response);
+            this.setState({threads:[response,...this.state.threads]});
+        });
+
+        console.log("res:" + this.state.threads);
+
+        // this.props.history.push('/home/mail');
+
     }
 
     getAllThreads(path) {
@@ -53,14 +73,7 @@ export default class MenuMail extends Component {
         }
     }
 
-    componentDidMount() {
-        this.props.history.push('/home/mail');
-        this.getAllThreads('/api/threads');
-        console.log('too');
 
-        console.log(this.state.mail);
-
-    }
 
     getNotFullContent(mail) {
         let fullMailContent = (mail.Text ? mail.Text : "Mail posiada załącznik. Wejdź, by zobaczyć całość").split("[https://ipmcdn.avast.com/images/icons/icon-envelope-tick-round-orange-animated-no-repeat-v1.gif]");
@@ -74,6 +87,7 @@ export default class MenuMail extends Component {
 
     renderItem(mail, index) {
         console.log('renderitem');
+        console.log(this.state.threads);
         return (
             <Item key={index}>
                 <Image src={myImage} height={100} width={160}/>
@@ -90,14 +104,17 @@ export default class MenuMail extends Component {
                 </Link>
             </Item>
         )
-
     }
 
     render() {
 
         const mails = _.map(this.state.threads, (mail, k) => {
-            return this.renderItem(mail, k);
+            return this.renderItem(mail._source, k);
         });
+
+//         let newMail = null;
+// if(this.state.mail !== null)
+//         newMail = this.renderItem(this.state.mail,1);
 
         return (
             <div>

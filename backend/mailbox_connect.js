@@ -1,9 +1,10 @@
 const uuidv4 = require('uuid/v4');
 var waitUntil = require('wait-until');
+const {emit} = require('./socket');
 
 var elasticsearch = require('elasticsearch')
 var client = new elasticsearch.Client({
-    host: 'elasticsearch:9200',
+    host: 'localhost:9200',
     log: [{type: "stdio", levels: ["error"]}]
 });
 
@@ -168,6 +169,7 @@ function processThreads(mail) {
         
         names += name + " ";
     }
+    
     return client.index({
         index: 'threads',
         type: 'thread',
@@ -189,8 +191,16 @@ function processThreads(mail) {
             console.log(error);
         }
         if(response) {
+            const res = client.get({
+                index: response._index,
+                type: response._type,
+                id: response._id
+            }).then((thread) => {
+                emit('thread', thread);
+             });
             console.log("Response:");
-            console.log(response);
+            console.log(res);
+            
         }
     });  
 }
