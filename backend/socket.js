@@ -12,6 +12,7 @@ let clients = [];
 
 const emit = (event,data) => {
     try {
+        console.log("emiting socket" + event + data);
         clients.forEach(socket => socket.emit(event, data));
       } catch (error) {
         console.error(`Error: ${error.code}`);

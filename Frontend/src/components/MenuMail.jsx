@@ -17,44 +17,42 @@ export default class MenuMail extends Component {
             mail: null,
             threads: [],
             response: false,
-            endpoint: "http://127.0.0.1:4001"
+            endpoint: "http://127.0.0.1:3000"
         };
     }
     componentDidMount() {
         this.props.history.push('/home/mail');
+        this.getAllThreads('/api/threads');
 
         const { endpoint } = this.state;
         const socket = socketIOClient(endpoint);
 
-        socket.on("event", response => this.setState({
-                             threads: response,
-            total: response.length
-                         }));
+        socket.on("thread", response => {
+            console.log(response);
+            this.setState({threads:[response,...this.state.threads]});
+        });
 
         console.log("res:" + this.state.threads);
 
         // this.props.history.push('/home/mail');
-        // this.getAllThreads('/api/threads');
-        // console.log('too');
-        //
-        // console.log(this.state.mail);
+
     }
 
-    // getAllThreads(path) {
-    //     console.log("yup");
-    //     // "/api/threads"
-    //     axios.get(path)
-    //         .then((response) => {
-    //             console.log(response);
-    //             this.setState({
-    //                 threads: response.data,
-    //                 total: response.data.length
-    //             });
-    //         })
-    //         .catch(function (error) {
-    //             console.log(error);
-    //         });
-    // }
+    getAllThreads(path) {
+        console.log("yup");
+        // "/api/threads"
+        axios.get(path)
+            .then((response) => {
+                console.log(response);
+                this.setState({
+                    threads: response.data,
+                    total: response.data.length
+                });
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
 
     getSearchThreads = (e, {value}) => {
         if(value !== '') {
@@ -106,7 +104,6 @@ export default class MenuMail extends Component {
                 </Link>
             </Item>
         )
-
     }
 
     render() {
@@ -115,7 +112,9 @@ export default class MenuMail extends Component {
             return this.renderItem(mail, k);
         });
 
-        const { response } = this.state;
+//         let newMail = null;
+// if(this.state.mail !== null)
+//         newMail = this.renderItem(this.state.mail,1);
 
         return (
             <div>
@@ -137,14 +136,6 @@ export default class MenuMail extends Component {
                                 </Dropdown.Menu>
                             </Dropdown>
                         </div>
-
-                        {/*<div style={{ textAlign: "center" }}>*/}
-                            {/*{response*/}
-                                {/*? <p>*/}
-                                    {/*The temperature in Florence is: {response} °F*/}
-                                {/*</p>*/}
-                                {/*: <p>Loading...</p>}*/}
-                        {/*</div>*/}
 
                         <Item.Group divided>
                             {mails}

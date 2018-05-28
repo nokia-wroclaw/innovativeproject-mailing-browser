@@ -89,6 +89,7 @@ function processMail(mail) {
             //   return record.setThread(result);
             //   });
         }).then((mail) => {
+            console.log("mailEmit:"+mail);
             emit('mail', mail);
          });
 
