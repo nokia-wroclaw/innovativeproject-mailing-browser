@@ -26,7 +26,7 @@ export default class MenuMail extends Component {
         const { endpoint } = this.state;
         const socket = socketIOClient(endpoint);
 
-        socket.on("yourEvent", response => this.setState({
+        socket.on("event", response => this.setState({
                              threads: response,
             total: response.length
                          }));

@@ -88,3 +88,9 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+/**
+ * Sockets
+ */
+var {initialize} = require('../socket');
+initialize(server);

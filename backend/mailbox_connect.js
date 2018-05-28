@@ -4,6 +4,7 @@ const MyThread = require('./db_create')
 var Thread = MyThread.Thread;
 const Sequelize = require('sequelize')
 const Op = Sequelize.Op
+const {emit} = require('./socket');
 
 console.log(Mail);
 
@@ -36,6 +37,8 @@ function execute() {
         imap.setFlags(results, ['\\Seen'], function (err) {
             if (!err) {
                 console.log("Marked as read");
+                //Sockets
+                emit("event");
             } else {
                 console.log(JSON.stringify(err, null, 2));
             }
@@ -54,6 +57,7 @@ function execute() {
     }).catch(function (err) {
         //console.log(err);
     });
+
 }, 2500);
 }
 
@@ -84,7 +88,9 @@ function processMail(mail) {
             //  }).then(function(record){
             //   return record.setThread(result);
             //   });
-        });
+        }).then((mail) => {
+            emit('mail', mail);
+         });
 
     Thread.update({
             threadDate: mail.date},
@@ -121,7 +127,9 @@ function processThreads(mail) {
         TextAsHtml: mail.html,
         messageId: mail.messageId,
         NumberOfReplies: 0
-    });
+    }).then((thread) => {
+        emit('thread', thread);
+     });
 }
 
 function processMessage(msg, seqno) {
@@ -137,6 +145,6 @@ function processMessage(msg, seqno) {
     });
 }
 
-// setInterval(execute, 2500);
+
 
 module.exports = imap;
