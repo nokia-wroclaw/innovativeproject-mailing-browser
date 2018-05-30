@@ -27,7 +27,7 @@ const Imap = require('imap'),
 const imap = new Imap({
     user: 'innovative.project@outlook.com',
     password: 'MailingGroup',
-    host: 'imap-mail.outlook.office365.com',
+    host: 'imap-mail.outlook.com',
     port: 993,
     tls: true
 });
