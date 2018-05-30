@@ -15,7 +15,8 @@ jobs:
     - stage: build
       script:
         - docker build -t elasticsearch .
-        - docker-compose up --build
+        - docker-compose up --build -d
+        - docker logs backend
 
   
  
