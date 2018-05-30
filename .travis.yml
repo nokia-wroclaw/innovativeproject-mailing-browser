@@ -15,7 +15,7 @@ jobs:
     - stage: build
       script:
         - docker build -t elasticsearch .
-        - docker-compose -f docker-compose.yml build mailingGroupBrowser
+        - docker-compose up --build
 
   
  
