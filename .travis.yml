@@ -16,7 +16,7 @@ jobs:
     - stage: build
       script:
         - docker build -t elasticsearch .
-        - docker-compose up --build
+        - docker-compose up --build -d
     - stage: deploy_to_heroku
       script:
         - docker login --username=_ --password=$HEROKU_TOKEN registry.heroku.com
@@ -24,11 +24,11 @@ jobs:
         - docker tag innovativeproject-mailing-browser_backend:latest registry.heroku.com/mailing-group-browser/backend
         - docker push registry.heroku.com/mailing-group-browser/backend
         - heroku container:release -a mailing-group-browser backend
-        - docker-compose docker-compose.yml build frontend
+        - docker-compose -f docker-compose.yml build frontend
         - docker tag innovativeproject-mailing-browser_frontend:latest registry.heroku.com/mailing-group-browser/frontend
         - docker push registry.heroku.com/mailing-group-browser/frontend
         - heroku container:release -a mailing-group-browser frontend
-        - docker-compose docker-compose.yml build elasticsearch
+        - docker-compose -f docker-compose.yml build elasticsearch
         - docker tag elasticsearch:latest registry.heroku.com/mailing-group-browser/elasticsearch
         - docker push registry.heroku.com/mailing-group-browser/elasticsearch
         - heroku container:release -a mailing-group-browser elasticsearch
