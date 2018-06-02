@@ -15,7 +15,6 @@ jobs:
   include:
     - stage: build
       script:
-        - docker build -t elasticsearch .
         - docker-compose -f docker-compose.yml build backend
         - docker-compose -f docker-compose.yml build frontend
         - docker-compose -f docker-compose.yml build elasticsearch
