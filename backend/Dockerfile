@@ -13,5 +13,5 @@ RUN  npm install --production --silent
 COPY . .
 
 EXPOSE 3000
-
+CMD ["npm","start"]
 ENTRYPOINT ["node", "./bin/www"]

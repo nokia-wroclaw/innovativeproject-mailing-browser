@@ -10,13 +10,32 @@ before_install:
 - docker pull elasticsearch
 stages:
 - name: build
+- name: deploy_to_heroku
 jobs:
   include:
     - stage: build
       script:
         - docker build -t elasticsearch .
-        - docker-compose up --build -d
-        - docker logs backend
+        - docker-compose up --build
+    - stage: deploy_to_heroku
+      script:
+        - docker login --username=_ --password=$HEROKU_TOKEN registry.heroku.com
+        - docker-compose -f docker-compose.yml build backend
+        - docker tag innovativeproject-mailing-browser_backend:latest registry.heroku.com/mailing-group-browser/backend
+        - docker push registry.heroku.com/mailing-group-browser/backend
+        - heroku container:release -a mailing-group-browser backend
+      - script:
+        - docker login --username=_ --password=$HEROKU_TOKEN registry.heroku.com
+        - docker-compose docker-compose.yml build frontend
+        - docker tag innovativeproject-mailing-browser_frontend:latest registry.heroku.com/mailing-group-browser/frontend
+        - docker push registry.heroku.com/mailing-group-browser/frontend
+        - heroku container:release -a mailing-group-browser frontend
+      - script:
+        - docker login --username=_ --password=$HEROKU_TOKEN registry.heroku.com
+        - docker-compose docker-compose.yml build elasticsearch
+        - docker tag elasticsearch:latest registry.heroku.com/mailing-group-browser/elasticsearch
+        - docker push registry.heroku.com/mailing-group-browser/elasticsearch
+        - heroku container:release -a mailing-group-browser elasticsearch
 
-  
+
  
