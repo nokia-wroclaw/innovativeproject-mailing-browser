@@ -24,15 +24,13 @@ jobs:
         - docker-compose -f docker-compose.yml build backend
         - docker tag innovativeprojectmailingbrowser_backend:latest registry.heroku.com/mailing-group-browser/backend
         - docker push registry.heroku.com/mailing-group-browser/backend
-        - heroku container:release -a mailing-group-browser backend
         - docker-compose -f docker-compose.yml build frontend
         - docker tag innovativeprojectmailingbrowser_frontend:latest registry.heroku.com/mailing-group-browser/frontend
         - docker push registry.heroku.com/mailing-group-browser/frontend
-        - heroku container:release -a mailing-group-browser frontend
         - docker-compose -f docker-compose.yml build elasticsearch
         - docker tag elasticsearch:latest registry.heroku.com/mailing-group-browser/elasticsearch
         - docker push registry.heroku.com/mailing-group-browser/elasticsearch
-        - heroku container:release -a mailing-group-browser elasticsearch
+
 
 
  
