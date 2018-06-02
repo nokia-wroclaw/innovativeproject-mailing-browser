@@ -16,7 +16,9 @@ jobs:
     - stage: build
       script:
         - docker build -t elasticsearch .
-        - docker-compose up --build -d
+        - docker-compose -f docker-compose.yml build backend
+        - docker-compose -f docker-compose.yml build frontend
+        - docker-compose -f docker-compose.yml build elasticsearch
     - stage: deploy_to_heroku
       script:
         - docker login --username=_ --password=$HEROKU_TOKEN registry.heroku.com
