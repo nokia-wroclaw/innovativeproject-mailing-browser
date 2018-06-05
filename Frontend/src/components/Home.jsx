@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import '../App.css';
 import MenuNavBar from './MenuNavBar';
-
+import Footer from "./Footer";
 
 export class Home extends Component {
     constructor() {
@@ -17,6 +17,7 @@ export class Home extends Component {
                 <div>
                     {this.props.children}
                 </div>
+               <Footer/>
             </div>
         );
     }

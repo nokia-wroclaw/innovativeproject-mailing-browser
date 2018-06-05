@@ -1,20 +1,21 @@
 import React, { Component } from 'react'
-import { Menu, Dropdown } from 'semantic-ui-react'
-import {Link} from 'react-router-dom'
+import { Menu, Container, Image} from 'semantic-ui-react'
+import myImage from './nokia.png';
 
 export default class MenuNavBar extends Component {
-  state = { activeItem: 'home' };
-
-  handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
   render() {
-    const { activeItem } = this.state;
-
     return (
       <div>
-        <Menu pointing secondary>
-            <Menu.Item name='home' active={activeItem === 'home'} onClick={this.handleItemClick}> <Link to={"/home/mail"}> Mailing group browser  </Link> </Menu.Item>
-        </Menu>
+          <Menu inverted>
+              <Container>
+                  <Menu.Item as='a' header href="/home/mail">
+                      <Image size='tiny' src={myImage} style={{ marginRight: '1.5em' }} />
+                      Mailing Group Browser
+                  </Menu.Item>
+                  <Menu.Item as='a'>Home</Menu.Item>
+              </Container>
+          </Menu>
       </div>
     )
   }
