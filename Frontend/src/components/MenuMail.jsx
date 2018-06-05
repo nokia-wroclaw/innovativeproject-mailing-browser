@@ -91,7 +91,7 @@ export default class MenuMail extends Component {
         return (
             <Item key={index}>
                 <Image src={myImage} height={100} width={160}/>
-                <Link to={'/singleThread/' + mail.id} style={{color: 'black'}}>
+                <Link to={'/singleThread/' + mail.MessageId} style={{color: 'black'}}>
                     <Item.Content>
                         <Item.Header>{mail.Subject}</Item.Header>
                         <Item.Meta>

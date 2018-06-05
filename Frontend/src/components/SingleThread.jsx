@@ -28,8 +28,12 @@ export default class SingleThread extends Component {
     };
 
     componentDidMount() {
+        console.log("singlethrad:" + this.props.match.params.id);
         this.getOneMail(this.props.match.params.id).then((result) => {
             this.setState({mails: result});
+            console.log("source:" + result);
+            console.log(result);
+
         });
     }
 
@@ -52,7 +56,7 @@ export default class SingleThread extends Component {
     renderMailNameAndContent() {
         const html = _.map(this.state.mails, (mail, k) => {
             if (k === 0) {
-                let fullMainMailAsHtml = mail.TextAsHtml.split("<td style=\"width: 55px; padding-top: 18px;\">");
+                let fullMainMailAsHtml = mail._source.TextAsHtml.split("<td style=\"width: 55px; padding-top: 18px;\">");
                 let MainMailNoAvast = fullMainMailAsHtml[0];
 
                 return (
@@ -65,7 +69,7 @@ export default class SingleThread extends Component {
                 )
             }
             else {
-                let fullMailAsHtml = mail.TextAsHtml;
+                let fullMailAsHtml = mail._source.TextAsHtml;
 
                 var indexStartAvast = fullMailAsHtml.indexOf("<tr>");
                 var indexEndAvast = fullMailAsHtml.indexOf("</tr>");
@@ -125,12 +129,12 @@ export default class SingleThread extends Component {
 
                 <Container text>
                     <Segment color='yellow'>
-                        <Header as='h2'>{this.state.mails ? this.state.mails[0].Subject : null}</Header>
+                        <Header as='h2'>{this.state.mails ? this.state.mails[0]._source.Subject : null}</Header>
                     </Segment>
                     <Segment tertiary>
-                        <Header as='h5'> Wysłane: {moment(this.state.mails ? this.state.mails[0].Date : null).format('DD/MM/YYYY, HH:mm:ss')}</Header>
-                        Od: {this.state.mails ? this.state.mails[0].From : null} <br/>
-                        Do: {this.state.mails ? this.state.mails[0].To : null}
+                        <Header as='h5'> Wysłane: {moment(this.state.mails ? this.state.mails[0]._source.Date : null).format('DD/MM/YYYY, HH:mm:ss')}</Header>
+                        Od: {this.state.mails ? this.state.mails[0]._source.From : null} <br/>
+                        Do: {this.state.mails ? this.state.mails[0]._source.To : null}
                     </Segment>
                     {this.state.mails ? this.renderMailNameAndContent() : null}
                 </Container>
