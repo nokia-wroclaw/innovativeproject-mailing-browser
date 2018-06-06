@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
 import '../App.css';
-import {Dropdown, Input, Container, Item, Segment} from 'semantic-ui-react'
+import {Dropdown, Input, Container, Item, Segment, Image,Reveal} from 'semantic-ui-react'
 import axios from 'axios';
 import _ from 'lodash';
 import {Link} from 'react-router-dom'
 import myImage from './mailImage.png';
-import Image from 'react-image-resizer';
 import './MenuMail.css';
 import moment from 'moment';
 import socketIOClient from "socket.io-client";
@@ -17,7 +16,8 @@ export default class MenuMail extends Component {
             mail: null,
             threads: [],
             response: false,
-            endpoint: "http://127.0.0.1:3000"
+            endpoint: "http://127.0.0.1:3000",
+            activePage: 1
         };
     }
     componentDidMount() {
@@ -73,8 +73,21 @@ export default class MenuMail extends Component {
         }
     }
 
+parseAttachment(mail){
 
+    let splittedImageHtml = mail.TextAsHtml.split("<img size");
 
+if(splittedImageHtml.length===2) {
+    let ImageHtml = splittedImageHtml[1];
+    let tmp1 = ImageHtml.split("src=\"data:image/png;base64,");
+    let tmp2 = tmp1[1].split("\">");
+    let ImageBinary = tmp2[0];
+    console.log(ImageBinary);
+    return "data:image/jpeg;base64," + ImageBinary;
+}
+
+return myImage;
+}
     getNotFullContent(mail) {
         let fullMailContent = (mail.Text ? mail.Text : "Mail posiada załącznik. Wejdź, by zobaczyć całość").split("[https://ipmcdn.avast.com/images/icons/icon-envelope-tick-round-orange-animated-no-repeat-v1.gif]");
         let stringShortText = fullMailContent[0].substring(0, 30);
@@ -87,15 +100,24 @@ export default class MenuMail extends Component {
 
     renderItem(mail, index) {
         console.log('renderitem');
-        console.log(this.state.threads);
+        console.log(mail);
+        console.log(index);
+
         return (
             <Item key={index}>
-                <Image src={myImage} height={100} width={160}/>
+                <Reveal animated='move'>
+                    <Reveal.Content visible>
+                        <Image src={this.parseAttachment(mail)} width="140px" height="100px" style={{padding:"10px"}} />
+                    </Reveal.Content>
+                    <Reveal.Content hidden>
+                        <Image src={myImage} width="140px" height="100px" style={{padding:"10px"}} />
+                    </Reveal.Content>
+                </Reveal>
                 <Link to={'/singleThread/' + mail.MessageId} style={{color: 'black'}}>
                     <Item.Content>
                         <Item.Header>{mail.Subject}</Item.Header>
                         <Item.Meta>
-                            <span>Data: {moment(mail.Date).format('DD/MM/YYYY, HH:mm')}</span>
+                            <span>Czas: {moment(mail.Date).format('DD/MM/YYYY, HH:mm')}</span>
                             <br/>
                             <span> Od: {mail.From}</span>
                         </Item.Meta>
