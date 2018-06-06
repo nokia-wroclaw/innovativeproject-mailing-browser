@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import '../App.css';
-import {Dropdown, Input, Container, Item, Segment, Image,Reveal} from 'semantic-ui-react'
+import {Dropdown, Input, Container, Item, Segment, Image,Reveal,Pagination,Grid} from 'semantic-ui-react'
 import axios from 'axios';
 import _ from 'lodash';
 import {Link} from 'react-router-dom'
@@ -17,7 +17,8 @@ export default class MenuMail extends Component {
             threads: [],
             response: false,
             endpoint: "http://127.0.0.1:3000",
-            activePage: 1
+            activePage: 1,
+            totalPages: 1
         };
     }
     componentDidMount() {
@@ -46,7 +47,7 @@ export default class MenuMail extends Component {
                 console.log(response);
                 this.setState({
                     threads: response.data,
-                    total: response.data.length
+                    totalPages: response.data.length/7
                 });
             })
             .catch(function (error) {
@@ -99,44 +100,42 @@ return myImage;
 
 
     renderItem(mail, index) {
-        console.log('renderitem');
-        console.log(mail);
-        console.log(index);
 
-        return (
-            <Item key={index}>
-                <Reveal animated='move'>
-                    <Reveal.Content visible>
-                        <Image src={this.parseAttachment(mail)} width="140px" height="100px" style={{padding:"10px"}} />
-                    </Reveal.Content>
-                    <Reveal.Content hidden>
-                        <Image src={myImage} width="140px" height="100px" style={{padding:"10px"}} />
-                    </Reveal.Content>
-                </Reveal>
-                <Link to={'/singleThread/' + mail.MessageId} style={{color: 'black'}}>
-                    <Item.Content>
-                        <Item.Header>{mail.Subject}</Item.Header>
-                        <Item.Meta>
-                            <span>Czas: {moment(mail.Date).format('DD/MM/YYYY, HH:mm')}</span>
-                            <br/>
-                            <span> Od: {mail.From}</span>
-                        </Item.Meta>
-                        <Item.Description>{this.getNotFullContent(mail)}</Item.Description>
-                    </Item.Content>
-                </Link>
-            </Item>
-        )
+        if(index < this.state.activePage*7 && index > this.state.activePage*7-7) {
+            return (
+                <Item key={index}>
+                    <Reveal animated='move'>
+                        <Reveal.Content visible>
+                            <Image src={this.parseAttachment(mail)} width="140px" height="100px"
+                                   style={{padding: "10px"}}/>
+                        </Reveal.Content>
+                        <Reveal.Content hidden>
+                            <Image src={myImage} width="140px" height="100px" style={{padding: "10px"}}/>
+                        </Reveal.Content>
+                    </Reveal>
+                    <Link to={'/singleThread/' + mail.MessageId} style={{color: 'black'}}>
+                        <Item.Content>
+                            <Item.Header>{mail.Subject}</Item.Header>
+                            <Item.Meta>
+                                <span>Czas: {moment(mail.Date).format('DD/MM/YYYY, HH:mm')}</span>
+                                <br/>
+                                <span> Od: {mail.From}</span>
+                            </Item.Meta>
+                            <Item.Description>{this.getNotFullContent(mail)}</Item.Description>
+                        </Item.Content>
+                    </Link>
+                </Item>
+            )
+        }
+
     }
 
-    render() {
+    handlePaginationChange = (e, { activePage }) => this.setState({ activePage })
 
+    render() {
         const mails = _.map(this.state.threads, (mail, k) => {
             return this.renderItem(mail._source, k);
         });
-
-//         let newMail = null;
-// if(this.state.mail !== null)
-//         newMail = this.renderItem(this.state.mail,1);
 
         return (
             <div>
@@ -164,7 +163,15 @@ return myImage;
                         </Item.Group>
                     </Segment>
                 </Container>
-
+                <Grid centered columns={4}>
+                <Grid.Column>
+                <Pagination
+                    activePage={this.state.activePage}
+                    onPageChange={this.handlePaginationChange}
+                    totalPages={this.state.totalPages}
+                />
+                </Grid.Column>
+                </Grid>
             </div>
         )
     }
