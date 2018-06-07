@@ -8,6 +8,7 @@ env:
   - DOCKER_COMPOSE_VERSION=1.21.2
 before_install:
 - docker pull elasticsearch
+- curl https://cli-assets.heroku.com/install-standalone.sh | sh
 stages:
 - name: build
 - name: deploy_to_heroku
@@ -30,6 +31,7 @@ jobs:
         - docker-compose -f docker-compose.yml build elasticsearch
         - docker tag elasticsearch:latest registry.heroku.com/mailing-group-browser/elasticsearch
         - docker push registry.heroku.com/mailing-group-browser/elasticsearch
+        - /usr/local/bin/heroku container:release -a mailing-group-browser backend frontend elasticsearch # requires HEROKU_API_KEY en
 
 
 
