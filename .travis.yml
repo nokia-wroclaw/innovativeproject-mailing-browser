@@ -2,10 +2,6 @@ language: node_js
 sudo: required
 node_js:
  - "node"
-deploy:
-  provider: heroku
-  api_key:
-    secure: $HEROKU_TOKEN
 services:
  - docker
 env:
@@ -24,6 +20,11 @@ jobs:
         - docker-compose -f docker-compose.yml build frontend
         - docker-compose -f docker-compose.yml build elasticsearch
     - stage: deploy_to_heroku
+    deploy:
+      provider: heroku
+      api_key:
+        secure: $HEROKU_TOKEN
+
       script:
         - docker login --username=_ --password=$HEROKU_TOKEN registry.heroku.com
         - docker-compose -f docker-compose.yml build backend
