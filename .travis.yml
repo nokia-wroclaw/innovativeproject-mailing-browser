@@ -8,8 +8,8 @@ env:
   - DOCKER_COMPOSE_VERSION=1.21.2
 deploy:
   provider: heroku
-  api_key: $HEROKU_TOKEN
-    secure:
+  api_key:
+    secure: $HEROKU_TOKEN
   app: mailing-group-browser
 before_install:
 - docker pull elasticsearch
