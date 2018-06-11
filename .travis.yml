@@ -6,6 +6,11 @@ services:
  - docker
 env:
   - DOCKER_COMPOSE_VERSION=1.21.2
+deploy:
+  provider: heroku
+  api_key: $HEROKU_TOKEN
+    secure:
+  app: mailing-group-browser
 before_install:
 - docker pull elasticsearch
 - curl https://cli-assets.heroku.com/install-standalone.sh | sh
@@ -20,11 +25,6 @@ jobs:
         - docker-compose -f docker-compose.yml build frontend
         - docker-compose -f docker-compose.yml build elasticsearch
     - stage: deploy_to_heroku
-    deploy:
-      provider: heroku
-      api_key:
-        secure: $HEROKU_TOKEN
-
       script:
         - docker login --username=_ --password=$HEROKU_TOKEN registry.heroku.com
         - docker-compose -f docker-compose.yml build backend
