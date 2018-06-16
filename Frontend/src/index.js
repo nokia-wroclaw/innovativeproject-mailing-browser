@@ -8,12 +8,11 @@ import MenuMail from "./components/MenuMail";
 import SingleThread from "./components/SingleThread";
 import 'semantic-ui-css/semantic.min.css';
 
-
 class App extends React.Component{
     render() {
         return (
             <Router>
-                    <Home>
+                    <Home >
                         <Switch>
                             <Route exact path="/" component={MenuMail}/>
                             <Route exact path="/home/mail" component={MenuMail} />

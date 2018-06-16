@@ -104,15 +104,9 @@ return myImage;
         if(index < this.state.activePage*7 && index > this.state.activePage*7-7) {
             return (
                 <Item key={index}>
-                    <Reveal animated='move'>
-                        <Reveal.Content visible>
-                            <Image src={this.parseAttachment(mail)} width="140px" height="100px"
-                                   style={{padding: "10px"}}/>
-                        </Reveal.Content>
-                        <Reveal.Content hidden>
-                            <Image src={myImage} width="140px" height="100px" style={{padding: "10px"}}/>
-                        </Reveal.Content>
-                    </Reveal>
+<div style={{width:"130px",height:"100px", display:"flex",justifyContent:"center"}}>
+                            <Image src={this.parseAttachment(mail)} width="auto" height="100px" style={{padding: "10px"}}/>
+</div>
                     <Link to={'/singleThread/' + mail.MessageId} style={{color: 'black'}}>
                         <Item.Content>
                             <Item.Header>{mail.Subject}</Item.Header>
@@ -163,15 +157,15 @@ return myImage;
                         </Item.Group>
                     </Segment>
                 </Container>
-                <Grid centered columns={4}>
-                <Grid.Column>
+                <div style={{display: "flex",justifyContent:  "center"}}>
                 <Pagination
                     activePage={this.state.activePage}
                     onPageChange={this.handlePaginationChange}
                     totalPages={this.state.totalPages}
+                    pointing
+                    secondary
                 />
-                </Grid.Column>
-                </Grid>
+                </div>
             </div>
         )
     }
