@@ -19,7 +19,7 @@ services:
       context: ./Frontend
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "8080:8080"
   elasticsearch:
     image: elasticsearch
     container_name: elasticsearch
