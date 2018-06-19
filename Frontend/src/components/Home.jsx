@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import '../App.css';
 import MenuNavBar from './MenuNavBar';
-
+import Footer from "./Footer";
+import myImage from './nokia.png';
 
 export class Home extends Component {
     constructor() {
@@ -14,9 +15,10 @@ export class Home extends Component {
                 <div>
                     <MenuNavBar/>
                 </div>
-                <div>
+                <div style={{backgroundImage: `url(${myImage})` }}>
                     {this.props.children}
                 </div>
+               <Footer/>
             </div>
         );
     }

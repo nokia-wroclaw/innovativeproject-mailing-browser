@@ -1,28 +1,53 @@
 import React, {Component} from 'react';
 import '../App.css';
-import {Container, Item, Segment} from 'semantic-ui-react'
+import {Dropdown, Input, Container, Item, Segment, Image,Reveal,Pagination,Grid} from 'semantic-ui-react'
 import axios from 'axios';
 import _ from 'lodash';
 import {Link} from 'react-router-dom'
 import myImage from './mailImage.png';
-import Image from 'react-image-resizer';
 import './MenuMail.css';
+import moment from 'moment';
+import socketIOClient from "socket.io-client";
+
 export default class MenuMail extends Component {
     constructor() {
         super();
         this.state = {
             mail: null,
-            threads: []
+            threads: [],
+            response: false,
+            endpoint: "http://127.0.0.1:3000",
+            activePage: 1,
+            totalPages: 1
         };
     }
+    componentDidMount() {
+        this.props.history.push('/home/mail');
+        this.getAllThreads('/api/threads');
 
-    getAllThreads() {
-        axios.get("/api/threads")
+        const { endpoint } = this.state;
+        const socket = socketIOClient(endpoint);
+
+        socket.on("thread", response => {
+            console.log(response);
+            this.setState({threads:[response,...this.state.threads]});
+        });
+
+        console.log("res:" + this.state.threads);
+
+        // this.props.history.push('/home/mail');
+
+    }
+
+    getAllThreads(path) {
+        console.log("yup");
+        // "/api/threads"
+        axios.get(path)
             .then((response) => {
                 console.log(response);
                 this.setState({
                     threads: response.data,
-                    total: response.data.length
+                    totalPages: response.data.length/7
                 });
             })
             .catch(function (error) {
@@ -30,80 +55,118 @@ export default class MenuMail extends Component {
             });
     }
 
-    getOneMail = (index) => {
-        var url = "/SingleThread";
-
-        return axios.get(url + index + '/')
-            .then(response => response.data[0]);
-    };
-
-    componentDidMount() {
-        // this.getOneMail(this.props.match.params.id).then((result) => {
-        //     this.setState({mail: result});
-        // });
-        this.getAllThreads();
-        console.log('too');
-
-        console.log(this.state.threads);
-
-    }
-
-    getNotFullContent(num){
-        let textLength = 50;
-        let string = "";
-        let stringShortText = this.state.threads[num].Text ? this.state.threads[num].Text : "";
-
-        if(stringShortText.length < textLength){
-        string = stringShortText;
-            return string;
+    getSearchThreads = (e, {value}) => {
+        if(value !== '') {
+            axios.get("/search/" + value)
+                .then((response) => {
+                    console.log(response);
+                    this.setState({
+                        threads: response.data,
+                        total: response.data.length
+                    });
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
         }
-
-        for (let x = 0; x<textLength ; x++){
-            string += (this.state.threads[num].Text && this.state.threads[num].Text[x] ? this.state.threads[num].Text[x] : "")
+        else{
+            this.getAllThreads('/api/threads');
         }
-            return string+"...";
     }
 
-    renderMails(num) {
-        //console.log('rendermails');
-       // console.log(this.state.threads);
-        return <div >
-            <h2>{this.state.threads ? this.state.threads[num].Subject : null}</h2>
-             <h4>{this.state.threads[num].From} </h4>
-            <p>{this.getNotFullContent(num)}</p>
-        </div>
+parseAttachment(mail){
+
+    let splittedImageHtml = mail.TextAsHtml.split("<img size");
+
+if(splittedImageHtml.length===2) {
+    let ImageHtml = splittedImageHtml[1];
+    let tmp1 = ImageHtml.split("src=\"data:image/png;base64,");
+    let tmp2 = tmp1[1].split("\">");
+    let ImageBinary = tmp2[0];
+    console.log(ImageBinary);
+    return "data:image/jpeg;base64," + ImageBinary;
+}
+
+return myImage;
+}
+    getNotFullContent(mail) {
+        let fullMailContent = (mail.Text ? mail.Text : "Mail posiada załącznik. Wejdź, by zobaczyć całość").split("[https://ipmcdn.avast.com/images/icons/icon-envelope-tick-round-orange-animated-no-repeat-v1.gif]");
+        let stringShortText = fullMailContent[0].substring(0, 30);
+
+        if (stringShortText !== fullMailContent[0])
+            return stringShortText + '...';
+        return stringShortText;
     }
 
-    render() {
 
-        const mails = _.map(this.state.threads, (mail, k) => {
-           var kk = k+1;
+    renderItem(mail, index) {
+
+        if(index < this.state.activePage*7 && index > this.state.activePage*7-7) {
             return (
-                <Item>
-                    <Image
-                        src = {myImage}
-                        width={150}
-                        height={150}
-                        //style={style.image}
-                    />
-                        <Link to={'/singleThread/' + mail.id } style={{color: 'black'}}>
-                        <div>
-                            {this.renderMails(k)}
-                        </div>
-                        </Link>
+                <Item key={index}>
+<div style={{width:"130px",height:"100px", display:"flex",justifyContent:"center"}}>
+                            <Image src={this.parseAttachment(mail)} width="auto" height="100px" style={{padding: "10px"}}/>
+</div>
+                    <Link to={'/singleThread/' + mail.MessageId} style={{color: 'black'}}>
+                        <Item.Content>
+                            <Item.Header>{mail.Subject}</Item.Header>
+                            <Item.Meta>
+                                <span>Czas: {moment(mail.Date).format('DD/MM/YYYY, HH:mm')}</span>
+                                <br/>
+                                <span> Od: {mail.From}</span>
+                            </Item.Meta>
+                            <Item.Description>{this.getNotFullContent(mail)}</Item.Description>
+                        </Item.Content>
+                    </Link>
                 </Item>
             )
+        }
+
+    }
+
+    handlePaginationChange = (e, { activePage }) => this.setState({ activePage })
+
+    render() {
+        const mails = _.map(this.state.threads, (mail, k) => {
+            return this.renderItem(mail._source, k);
         });
 
         return (
-            <Container text>
-                <Segment padded='very' tertiary>
-            <Item.Group divided>
-                {mails}
-            </Item.Group>
-            </Segment>
-            </Container>
+            <div>
+                <Container text>
+                    <Segment secondary>
+                        <div align="center">
+                            <Input onChange={this.getSearchThreads}
+                                   icon={{name: 'search', circular: true, link: true}}
+                                   placeholder='Szukaj...'/>
+                            <Dropdown text='Sortowanie' icon='filter' floating labeled button className='icon'>
+                                <Dropdown.Menu>
+                                    <Dropdown.Header icon='tags' content='Sortuj po...'/>
+                                    <Dropdown.Divider/>
+                                    <Dropdown.Item onClick={() => this.getAllThreads('/api/threads')}>Dacie malejąco(od
+                                        najnowszych)</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => this.getAllThreads('/threads/sort=ASC')}>Dacie
+                                        rosnąco(od najstarszych)</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => this.getAllThreads('/threads/HotThreads')}>Popularności</Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        </div>
 
+                        <Item.Group divided>
+                            {mails}
+                        </Item.Group>
+                    </Segment>
+                </Container>
+                <div style={{display: "flex",justifyContent:  "center"}}>
+                <Pagination
+                    activePage={this.state.activePage}
+                    onPageChange={this.handlePaginationChange}
+                    totalPages={this.state.totalPages}
+                    pointing
+                    secondary
+                />
+                </div>
+            </div>
         )
     }
 }

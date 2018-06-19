@@ -1,46 +1,75 @@
 var express = require('express');
 var router = express.Router();
-const MyMail = require('../db_create')
-var Mail = MyMail.Mail;
-const MyThread = require('../db_create')
-var Thread = MyThread.Thread
-const Sequelize = require('sequelize')
-const Op = Sequelize.Op
+const MyClient = require('../mailbox_connect')
+var client = MyClient.client;
 
-
-router.get('/threads', function (req, res, next) {
-    Thread.findAll({
-        order: [
-            ['threadDate', 'DESC'],
-        ]
-    }).then(result => {
-        res.json(result);
+router.get('/deleteall', function (req, res, next) {
+    client.indices.delete({
+        index: '*'
+    }, function (error, response) {
         res.end();
     });
 });
 
-router.get('/threads/:id', function(req, res, next) {
-      Thread.findById(req.params.id).then((result)=>{
-        if(result == null) {
-            res.sendStatus(404);
-            res.end();
+router.get('/threads', function (req, res, next) {
+
+    client.search({
+        index: 'threads',
+        size: 1000,
+        body: {
+            sort: [{"ThreadDate": { "order": "desc"}}],
+            query: { match_all: {}}
         }
-        else {
-            return Mail.findAll({
-            where: {
-                reference: result.messageId
-             },
-                order: [
-                    ['Date', 'ASC'],
-                ]
-            }).then((result2)=>{            
-                console.log(result, " cccccccccccccccccccccccccccccccccccccccccccasds",  result2)
-                res.json([result,...result2]);
-                res.end();        
-            })  
-        }      
-      })
-  }) ;
+    }, function(error, response) {
+        console.log("Response:");
+        res.json(response.hits.hits);
+        console.log(response);
+    });   
+});
+
+router.get('/mails', function (req, res, next) {
+
+    client.search({
+        index: 'mails',
+        size: 1000,
+        body: {
+            sort: [{"Date": { "order": "desc"}}],
+            query: { match_all: {}}
+        }
+    }, function(error, response) {
+        console.log("Response:");
+        res.json(response.hits.hits);
+        console.log(response);
+    });   
+
+});
+router.get('/threads/:id', function(req, res, next) {
+    client.search({
+        index: 'threads',
+        body: {
+            query: {
+                match_phrase: {
+                    MessageId: req.params.id
+                }
+            }
+        }
+    }, function (error, response) {
+        client.search({
+            index: 'mails',
+            body: {
+                sort: [{"Date": { "order": "asc"}}],
+                query: {
+                    match_phrase: {
+                        reference: response.hits.hits[0]._source.MessageId
+                    }
+                }
+            }
+        }, function (error, response2) {
+            res.json([...response.hits.hits,...response2.hits.hits]);
+            res.end();
+        })
+    })
+})
 
 
 

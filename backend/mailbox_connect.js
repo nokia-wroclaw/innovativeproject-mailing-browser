@@ -1,11 +1,25 @@
-const MyMail = require('./db_create')
-var Mail = MyMail.Mail;
-const MyThread = require('./db_create')
-var Thread = MyThread.Thread;
-const Sequelize = require('sequelize')
-const Op = Sequelize.Op
+const uuidv4 = require('uuid/v4');
+var waitUntil = require('wait-until');
+const {emit} = require('./socket');
 
-console.log(Mail);
+var elasticsearch = require('elasticsearch')
+var client = new elasticsearch.Client({
+    host: 'localhost:9200',
+    log: [{type: "stdio", levels: ["error"]}]
+});
+
+client.ping({
+    requestTimeout: 5000
+}, function(error) {
+    if (error) {
+        console.trace('Error:', error);
+        client.close();
+        process.exit();
+    } else {
+        console.log('Connected!');
+        imap.connect();
+    }
+});
 
 const Imap = require('imap'),
     parser = require('mailparser').simpleParser,
@@ -26,7 +40,7 @@ imap.once("ready", execute);
 imap.once("error", function (err) {
     console.error("Connection error:" + err.stack);
 });
-imap.connect();
+
 
 function execute() {
     setInterval(function () {
@@ -52,6 +66,7 @@ function execute() {
             console.info("Done fetching all unseen messages.");        
         });
     }).catch(function (err) {
+        //console.log(err);
     });
 }, 2500);
 }
@@ -61,66 +76,133 @@ function isThread(mail) {
 }
 
 function processMail(mail) {
+    var ref = String(mail.references).split(",");
 
-    var [ref] = String(mail.references).split(",");
-
-    Thread.find({
-        where: {
-            messageId: ref
-        }
-    }).then((result) => {
-        Mail.create({
-            Subject: mail.subject,
-            From: mail.from.value[0].address,
-            To: mail.to.value[0].address,
-            Date: mail.date,
-            Text: mail.text,
-            TextAsHtml: mail.html,
-            messageId: mail.messageId,
-            reference: ref,
-            threadId: result.id
-
-            //  }).then(function(record){
-            //   return record.setThread(result);
-            //   });
+    var names = null;
+    for(i = 0; i < mail.attachments.length; i++){
+        var filename = mail.attachments[i].filename;
+        var extension = String(filename).split(".");    
+        var name = uuidv4() + "." + extension[1];
+        require('fs').writeFile("./att/" + name, mail.attachments[i].content, 'base64', function(err) {
+            console.log(err);
         });
+        
+        names += name + " ";
+    }
+    var search_result = null;
 
-    Thread.update({
-            threadDate: mail.date},
-        {
-            where: {
-                [Op.and]:
-                    [
-                        {messageId: ref},
-                        {Date: {[Op.lt]: mail.date}}
-                    ]
+    waitUntil()
+    .interval(200) 
+    .times(1000)    
+    .condition(function() {
+        client.search({
+            index: 'threads',
+            body: {
+                query: {
+                    match_phrase: {
+                       MessageId : ref[0]
+                    }
+                }
             }
-        }
-    );
-        Thread.update({
-            NumberOfReplies: Sequelize.literal('"NumberOfReplies" + 1')},
-            {
-                where: {messageId: ref}
+        }, function (error, response) {
+            if(response.hits.total != 0)
+                search_result = response.hits;
+        })
+        return (search_result != null ? search_result : null);
+    })
+    .done(function(result) {
+        // do stuff
+        client.index({
+            index: 'mails',
+            type: 'mail',
+            body: {
+                Subject: mail.subject,
+                From: mail.from.value[0].address,
+                To: mail.to.value[0].address,
+                Date: mail.date,
+                Text: mail.text,
+                TextAsHtml: mail.html,
+                messageId: mail.messageId,
+                reference: ref[0],
+                threadId: result.hits[0]._id,
+                Att: names
             }
-        );
+        }, function (error, response) {
+            if(error) {
+                console.log("Error:");
+                console.log(error);
+            }
+            if(response) {
+                console.log("Response:");
+                console.log(response);
+                client.update({
+                    index: 'threads',
+                    type: 'thread',
+                    id: result.hits[0]._id,
+                    body: {
+                        doc: {
+                            ThreadDate: mail.date,
+                            NumberOfReplies: result.hits[0]._source.NumberOfReplies + 1
+                        }
+                    },
+                    retryOnConflict: 1000
+                }).catch( function (error) { 
+                    console.log(error);
+                })
+            }
+        });  
 
+        
     });
 }
 
 
 function processThreads(mail) {
-
-    Thread.create({
-        Subject: mail.subject,
-        From: mail.from.value[0].address,
-        To: mail.to.value[0].address,
-        Date: mail.date,
-        threadDate: mail.date,
-        Text: mail.text,
-        TextAsHtml: mail.html,
-        messageId: mail.messageId,
-        NumberOfReplies: 0
-    });
+    var names = null;
+    for(i = 0; i < mail.attachments.length; i++){
+        var filename = mail.attachments[i].filename;
+        var extension = String(filename).split(".");    
+        var name = uuidv4() + "." + extension[1];
+        require('fs').writeFile("./att/" + name, mail.attachments[i].content, 'base64', function(err) {
+            console.log(err);
+        });
+        
+        names += name + " ";
+    }
+    
+    return client.index({
+        index: 'threads',
+        type: 'thread',
+        body: {
+            Subject: mail.subject,
+            From: mail.from.value[0].address,
+            To: mail.to.value[0].address,
+            Date: mail.date,
+            ThreadDate: mail.date,
+            Text: mail.text,
+            TextAsHtml: mail.html,
+            MessageId: mail.messageId,
+            NumberOfReplies: 0,
+            Att: names
+        }
+    }, function (error, response) {
+        if(error) {
+            console.log("Error:");
+            console.log(error);
+        }
+        if(response) {
+            const res = client.get({
+                index: response._index,
+                type: response._type,
+                id: response._id
+            }).then((thread) => {
+                emit('thread', thread);
+             });
+            console.log("Response:");
+            console.log(res);
+            
+        }
+    });  
 }
 
 function processMessage(msg, seqno) {
@@ -128,14 +210,13 @@ function processMessage(msg, seqno) {
     msg.on("body", function (stream) {
         parser(stream).then(mail => {
             if (isThread(mail)) {
-                processThreads(mail);
+                 processThreads(mail);                
             } else {
-                processMail(mail);
+                  processMail(mail);             
             }
         });
     });
 }
 
-// setInterval(execute, 2500);
-
-module.exports = imap;
+module.exports.client = client;
+module.exports.imap = imap;
