@@ -6,16 +6,45 @@ services:
  - docker
 env:
   - DOCKER_COMPOSE_VERSION=1.21.2
+deploy:
+  provider: heroku
+  api_key:
+    secure: $HEROKU_TOKEN
+  app: mailing-group-browser
 before_install:
 - docker pull elasticsearch
+- sudo rm /usr/local/bin/docker-compose
+- curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+- chmod +x docker-compose
+- sudo mv docker-compose /usr/local/bin
+- docker-compose --version
+- docker ps -a
+- curl https://cli-assets.heroku.com/install-standalone.sh | sh
 stages:
 - name: build
+- name: deploy_to_heroku
 jobs:
   include:
     - stage: build
       script:
-        - docker build -t elasticsearch
-        -docker-compose up  -d --build
+        - docker-compose -f docker-compose.yml build backend
+        - docker-compose -f docker-compose.yml build frontend
+        - docker-compose -f docker-compose.yml build elasticsearch
+    - stage: deploy_to_heroku
+      script:
+        - docker login --username=_ --password=$HEROKU_TOKEN registry.heroku.com
+        - docker-compose -f docker-compose.yml build backend
+        - docker tag innovativeproject-mailing-browser_backend:latest registry.heroku.com/mailing-group-browser/backend
+        - docker push registry.heroku.com/mailing-group-browser/backend
+        - docker-compose -f docker-compose.yml build frontend
+        - docker tag innovativeproject-mailing-browser_frontend:latest registry.heroku.com/mailing-group-browser/frontend
+        - docker push registry.heroku.com/mailing-group-browser/frontend
+        - docker-compose -f docker-compose.yml build elasticsearch
+        - docker tag elasticsearch:latest registry.heroku.com/mailing-group-browser/elasticsearch
+        - docker push registry.heroku.com/mailing-group-browser/elasticsearch
+        - docker ps -a
+        - /usr/local/bin/heroku container:release -a mailing-group-browser backend frontend elasticsearch # requires HEROKU_API_KEY en
 
-  
+
+
  

@@ -1,11 +1,20 @@
 const uuidv4 = require('uuid/v4');
 var waitUntil = require('wait-until');
 const {emit} = require('./socket');
+var bonsai_url= process.env.BONSAI_URL;
 
 var elasticsearch = require('elasticsearch')
 var client = new elasticsearch.Client({
-    host: 'localhost:9200',
-    log: [{type: "stdio", levels: ["error"]}]
+    host: bonsai_url,
+    log: 'trace'
+});
+
+client.indices.create( {
+    index: 'threads'
+});
+
+client.indices.create( {
+    index: 'mails'
 });
 
 client.ping({
@@ -92,8 +101,8 @@ function processMail(mail) {
     var search_result = null;
 
     waitUntil()
-    .interval(200) 
-    .times(1000)    
+    .interval(500)
+    .times(10000)
     .condition(function() {
         client.search({
             index: 'threads',
@@ -169,7 +178,6 @@ function processThreads(mail) {
         
         names += name + " ";
     }
-    
     return client.index({
         index: 'threads',
         type: 'thread',
@@ -200,7 +208,7 @@ function processThreads(mail) {
              });
             console.log("Response:");
             console.log(res);
-            
+
         }
     });  
 }
