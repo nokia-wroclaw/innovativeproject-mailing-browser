@@ -26,12 +26,12 @@ export default class MenuMail extends Component {
         this.getAllThreads('/api/threads');
 
         const { endpoint } = this.state;
-        const socket = socketIOClient(endpoint);
+        const socket = socketIOClient();
 
         socket.on("thread", response => {
             console.log(response);
             this.setState({threads:[response,...this.state.threads]});
-        });
+    });
 
         console.log("res:" + this.state.threads);
 
@@ -47,7 +47,7 @@ export default class MenuMail extends Component {
                 console.log(response);
                 this.setState({
                     threads: response.data,
-                    totalPages: response.data.length/7
+                    totalPages: Math.ceil(response.data.length/7)
                 });
             })
             .catch(function (error) {
@@ -55,14 +55,15 @@ export default class MenuMail extends Component {
             });
     }
 
-    getSearchThreads = (e, {value}) => {
+    getSearchThreads = _.debounce((e, {value}) => {
         if(value !== '') {
             axios.get("/search/" + value)
                 .then((response) => {
                     console.log(response);
                     this.setState({
                         threads: response.data,
-                        total: response.data.length
+                        total: response.data.length,
+                        totalPages: Math.ceil(response.data.length/7)
                     });
                 })
                 .catch(function (error) {
@@ -72,7 +73,8 @@ export default class MenuMail extends Component {
         else{
             this.getAllThreads('/api/threads');
         }
-    }
+    },500);
+
 
 parseAttachment(mail){
 
@@ -128,7 +130,7 @@ return myImage;
 
     render() {
         const mails = _.map(this.state.threads, (mail, k) => {
-            return this.renderItem(mail._source, k);
+            return this.renderItem(mail._source, k+1);
         });
 
         return (

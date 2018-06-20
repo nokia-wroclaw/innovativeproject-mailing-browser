@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import '../App.css';
 import MenuNavBar from './MenuNavBar';
 import Footer from "./Footer";
-import myImage from './nokia.png';
+import myImage from './mail3.jpg';
 
 export class Home extends Component {
     constructor() {
@@ -15,7 +15,7 @@ export class Home extends Component {
                 <div>
                     <MenuNavBar/>
                 </div>
-                <div style={{backgroundImage: `url(${myImage})` }}>
+                <div style={{ width:"100vw", height:"100vh", backgroundRepeat:"repeat-y", backgroundImage: `url(${myImage})` }}>
                     {this.props.children}
                 </div>
                <Footer/>
