@@ -6,7 +6,7 @@ export default class MenuNavBar extends Component {
     constructor(){
         super();
         this.state={
-            color: 'black'
+            color: 'blue'
         }
     }
 
@@ -25,19 +25,19 @@ export default class MenuNavBar extends Component {
                           </Reveal.Content>
                       </Reveal>
 
-                      Mailing Group Browser
+                      Mailing Groups Browser
                   </Menu.Item>
                   <Menu.Item as='a'>Home</Menu.Item>
                   <Menu.Menu position='right'>
-                      <Dropdown text='Personalizacja' pointing className='link item'>
+                      <Dropdown text='Personalization' pointing className='link item'>
                           <Dropdown.Menu>
-                              <Dropdown.Header>Wybierz kolor</Dropdown.Header>
+                              <Dropdown.Header>Choose color</Dropdown.Header>
                               <Dropdown.Divider />
-                              <Dropdown.Item onClick={() => this.setState({color: 'black'})}>Czarny</Dropdown.Item>
-                              <Dropdown.Item onClick={() => this.setState({color: 'red'})}>Czerwony</Dropdown.Item>
-                              <Dropdown.Item onClick={() => this.setState({color: 'blue'})}>Niebieski</Dropdown.Item>
-                              <Dropdown.Item onClick={() => this.setState({color: 'pink'})}>Różowy</Dropdown.Item>
-                              <Dropdown.Item onClick={() => this.setState({color: 'violet'})}>Fioletowy</Dropdown.Item>
+                              <Dropdown.Item onClick={() => this.setState({color: 'black'})}>Black</Dropdown.Item>
+                              <Dropdown.Item onClick={() => this.setState({color: 'red'})}>Red</Dropdown.Item>
+                              <Dropdown.Item onClick={() => this.setState({color: 'blue'})}>Blue</Dropdown.Item>
+                              <Dropdown.Item onClick={() => this.setState({color: 'pink'})}>Pink</Dropdown.Item>
+                              <Dropdown.Item onClick={() => this.setState({color: 'violet'})}>Violet</Dropdown.Item>
                           </Dropdown.Menu>
                       </Dropdown>
                   </Menu.Menu>

@@ -16,7 +16,7 @@ export default class MenuMail extends Component {
             mail: null,
             threads: [],
             response: false,
-            endpoint: "http://127.0.0.1:3000",
+            endpoint: "https://mailing-groups-backend.herokuapp.com/",
             activePage: 1,
             totalPages: 1
         };
@@ -47,7 +47,7 @@ export default class MenuMail extends Component {
                 console.log(response);
                 this.setState({
                     threads: response.data,
-                    totalPages: response.data.length/7
+                    totalPages:Math.ceil(response.data.length/7)
                 });
             })
             .catch(function (error) {
@@ -55,14 +55,15 @@ export default class MenuMail extends Component {
             });
     }
 
-    getSearchThreads = (e, {value}) => {
+    getSearchThreads = _.debounce((e, {value}) => {
         if(value !== '') {
             axios.get("/search/" + value)
                 .then((response) => {
                     console.log(response);
                     this.setState({
                         threads: response.data,
-                        total: response.data.length
+                        total: response.data.length,
+                        totalPages: Math.ceil(response.data.length/7)
                     });
                 })
                 .catch(function (error) {
@@ -72,7 +73,7 @@ export default class MenuMail extends Component {
         else{
             this.getAllThreads('/api/threads');
         }
-    }
+    },500);
 
 parseAttachment(mail){
 
@@ -128,7 +129,7 @@ return myImage;
 
     render() {
         const mails = _.map(this.state.threads, (mail, k) => {
-            return this.renderItem(mail._source, k);
+            return this.renderItem(mail._source, k+1);
         });
 
         return (
@@ -138,16 +139,14 @@ return myImage;
                         <div align="center">
                             <Input onChange={this.getSearchThreads}
                                    icon={{name: 'search', circular: true, link: true}}
-                                   placeholder='Szukaj...'/>
-                            <Dropdown text='Sortowanie' icon='filter' floating labeled button className='icon'>
+                                   placeholder='Search...'/>
+                            <Dropdown text='Sort' icon='filter' floating labeled button className='icon'>
                                 <Dropdown.Menu>
-                                    <Dropdown.Header icon='tags' content='Sortuj po...'/>
+                                    <Dropdown.Header icon='tags' content='Sort by...'/>
                                     <Dropdown.Divider/>
-                                    <Dropdown.Item onClick={() => this.getAllThreads('/api/threads')}>Dacie malejąco(od
-                                        najnowszych)</Dropdown.Item>
-                                    <Dropdown.Item onClick={() => this.getAllThreads('/threads/sort=ASC')}>Dacie
-                                        rosnąco(od najstarszych)</Dropdown.Item>
-                                    <Dropdown.Item onClick={() => this.getAllThreads('/threads/HotThreads')}>Popularności</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => this.getAllThreads('/api/threads')}>By newest</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => this.getAllThreads('/sort/threads/sort=ASC')}>By oldest</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => this.getAllThreads('/sort/threads/HotThreads')}>Hot threads</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
                         </div>

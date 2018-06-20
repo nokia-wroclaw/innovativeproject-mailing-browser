@@ -18,7 +18,7 @@ client.indices.create( {
 });
 
 client.ping({
-    requestTimeout: 5000
+    requestTimeout: 30000
 }, function(error) {
     if (error) {
         console.trace('Error:', error);

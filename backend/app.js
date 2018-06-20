@@ -11,7 +11,7 @@ var search = require('./routes/search');
 
 app.use("/search",search);
 app.use("/api",mails);
-app.use("/",threads);
+app.use("/sort",threads);
 
 module.exports = app;
 
