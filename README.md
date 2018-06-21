@@ -35,7 +35,7 @@ Currently we have finished the following functionalities:
 
 **If you want to set it up locally:**
 **Before setting up the project please equip yourself with elasticsearch client. You can download it for free at https://www.elastic.co/downloads/elasticsearch Install it and launch.**
-**Please download the repository by typing commands:
+**Please download the repository by typing commands:**
 ```
 git clone https://github.com/nokia-wroclaw/innovativeproject-mailing-browser.git
 ```
@@ -47,7 +47,7 @@ cd ..
 cd backend/
 npm install
 ```
-**Now you have to change lines 6-9 in the backend/mailbox_connect.js this way:
+**Now you have to change lines 6-9 in the backend/mailbox_connect.js this way:**
 ```
 var client = new elasticsearch.Client({
     host: 'localhost:9200',
@@ -64,7 +64,7 @@ npm start
 cd Frontend/
 npm start
 ```
-**App should start automaticaly**
+**App should start automatically.**
 
 
 # 5. Contributing
